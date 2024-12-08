@@ -1,4 +1,4 @@
-package com.second.JTrace;
+package com.second.JTrace.utils;
 
 import java.util.Properties;
 

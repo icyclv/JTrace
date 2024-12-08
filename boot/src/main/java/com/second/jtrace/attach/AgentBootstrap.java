@@ -1,11 +1,13 @@
 package com.second.jtrace.attach;
 
+import com.second.JTrace.utils.AnsiLog;
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.*;
+
+import static com.second.jtrace.attach.BootUtils.isValidJarPath;
+import static com.second.jtrace.attach.BootUtils.readPid;
 
 public class AgentBootstrap {
 
@@ -18,62 +20,52 @@ public class AgentBootstrap {
         defaultValues.put("coreJar", "~/.jtrace/lib/core.jar");
 
         Map<String, String> config = new HashMap<>(defaultValues);
-        try {
-            for (int i = 0; i < args.length; i++) {
-                if (args[i].startsWith("--") && i + 1 < args.length) {
-                    String key = args[i].substring(2);
-                    String value = args[i + 1];
-                    config.put(key, value);
-                    i++; // 跳过下一个参数
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Error parsing arguments. Please use the format: --key value");
-            return;
-        }
+        BootUtils.parseConfig(args, config);
 
         System.out.println("Current Configuration:");
         config.forEach((key, value) -> System.out.println(key + ": " + value));
+        // 提示是否需要修改配置或继续
+        System.out.println("\nDo you want to continue with the current configuration? (Y/N)");
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        if (!input.equalsIgnoreCase("Y")) {
+            System.out.println("Please enter the new configuration( --key value), or press Enter to use the default value:");
+            String[] newArgs = scanner.nextLine().split(" ");
+            BootUtils.parseConfig(newArgs, config);
+        }
 
-        if (!isValidConfig(config)) {
-            System.err.println("Invalid configuration. Please check your input.");
+        if (!isValidJarPath(config.get("agentJar"), config.get("coreJar"))) {
+            System.err.println("Invalid path. Please check your input.");
             return;
         }
 
         List<VirtualMachineDescriptor> vms = VirtualMachine.list();
+        Set<Long> pidSet = new HashSet<>();
+
         System.out.println("\nRunning JVM Processes:");
         for (VirtualMachineDescriptor vm : vms) {
+            if (vm.displayName().contains("com.com.second.jtrace.attach.AgentBootstrap")) {
+                continue;
+            }
             System.out.println("PID: " + vm.id() + " - Name: " + vm.displayName());
+            pidSet.add(Long.parseLong(vm.id()));
         }
 
-        // 提示用户输入 PID
         System.out.println("\nEnter the PID of the target JVM to attach the agent:");
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-            String input = reader.readLine();
-            int pid = Integer.parseInt(input);
-
-            // 尝试附加到目标 JVM
-            attachAgent(pid, config.get("agentJar"));
-        } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            e.printStackTrace();
+        long pid = 0;
+        while (true) {
+            try {
+                pid = readPid(pidSet);
+                break;
+            } catch (Exception e) {
+                AnsiLog.error("Invalid PID. The PID must be one of the listed PIDs.");
+            }
         }
+
+        BootUtils.startAttachAgent(pid, config.get("agentJar"), config.get("coreJar"), config.get("server"), config.get("ip"), config.get("name"));
+
+
     }
 
-    private static boolean isValidConfig(Map<String, String> config) {
-        // 这里可以添加更多验证逻辑
-        return config.get("agentJar").endsWith(".jar") && config.get("coreJar").endsWith(".jar");
-    }
 
-    private static void attachAgent(int pid, String agentJar) {
-        try {
-            VirtualMachine vm = VirtualMachine.attach(String.valueOf(pid));
-            vm.loadAgent(agentJar);
-            vm.detach();
-            System.out.println("Successfully attached agent to JVM with PID: " + pid);
-        } catch (Exception e) {
-            System.err.println("Failed to attach agent to JVM. Error: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
 }
