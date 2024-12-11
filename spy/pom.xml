@@ -7,13 +7,9 @@
         <groupId>com.second</groupId>
         <artifactId>jtrace-all</artifactId>
         <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>jtrace-common</artifactId>
-
-    <dependencies>
+    <artifactId>jtrace-spy</artifactId>
 
 
-    </dependencies>
 </project>

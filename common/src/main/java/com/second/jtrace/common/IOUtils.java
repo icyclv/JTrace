@@ -1,4 +1,4 @@
-package com.second.JTrace.utils;
+package com.second.jtrace.common;
 
 import java.io.*;
 import java.util.Enumeration;

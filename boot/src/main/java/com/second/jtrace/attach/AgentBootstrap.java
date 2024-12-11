@@ -1,6 +1,6 @@
 package com.second.jtrace.attach;
 
-import com.second.JTrace.utils.AnsiLog;
+import com.second.jtrace.common.AnsiLog;
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 

@@ -1,8 +1,8 @@
 package com.second.jtrace.attach;
 
-import com.second.JTrace.utils.AnsiLog;
-import com.second.JTrace.utils.IOUtils;
-import com.second.JTrace.utils.JavaVersionUtils;
+import com.second.jtrace.common.AnsiLog;
+import com.second.jtrace.common.IOUtils;
+import com.second.jtrace.common.JavaVersionUtils;
 
 import java.io.*;
 import java.util.*;

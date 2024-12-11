@@ -1,4 +1,4 @@
-package com.second.JTrace.utils;
+package com.second.jtrace.common;
 
 /**
  * Enum of supported operating systems.

@@ -15,6 +15,7 @@
         <module>server</module>
         <module>web-ui</module>
         <module>boot</module>
+        <module>spy</module>
     </modules>
 
     <properties>
