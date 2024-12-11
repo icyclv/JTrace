@@ -2,6 +2,9 @@ package com.second.jtrace.core.command;
 
 
 import com.second.jtrace.core.client.IClient;
+import com.second.jtrace.core.enhance.EnhancerAffect;
+import com.second.jtrace.core.enhance.EnhancerTransformer;
+import com.second.jtrace.core.listener.AdviceListenerAdapter;
 import com.second.jtrace.core.response.IResponse;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -9,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.instrument.Instrumentation;
 import java.util.Set;
+
+import static com.second.jtrace.core.util.ClassUtils.findClassesOnly;
 
 
 @Data
@@ -39,7 +44,7 @@ public abstract class EnhanceCommand extends AbstractCommand {
     public IResponse executeForResponse(IClient client) {
         try {
             Instrumentation instrumentation = client.getInstrumentation();
-            Set<Class<?>> clazzSet = ClassLoaderUtils.findClassesOnly(instrumentation, className, classLoaderHash);
+            Set<Class<?>> clazzSet = findClassesOnly(instrumentation, className, classLoaderHash);
 
             EnhancerTransformer enhancerTransformer = new EnhancerTransformer(clazzSet
                     , methodName, getAdviceListener(client), isTracing(), isSkipJDKTrace());
@@ -66,7 +71,7 @@ public abstract class EnhanceCommand extends AbstractCommand {
      * @param client
      * @return
      */
-    public abstract AbstractEnhanceAdviceListener getAdviceListener(IClient client);
+    public abstract AdviceListenerAdapter getAdviceListener(IClient client);
 
     /**
      * 是否需要针对方法里面的方法调用增加切面

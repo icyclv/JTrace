@@ -1,7 +1,9 @@
 package com.second.jtrace.core.util;
 
-import com.alibaba.arthas.deps.org.slf4j.Logger;
-import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+
+import com.second.jtrace.common.JTraceConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
@@ -30,6 +32,7 @@ public class ClassLoaderUtils {
         }
         return classLoaderSet;
     }
+
 
     public static ClassLoader getClassLoader(Instrumentation inst, String hashCode) {
         if (hashCode == null || hashCode.isEmpty()) {

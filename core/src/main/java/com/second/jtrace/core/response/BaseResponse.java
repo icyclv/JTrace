@@ -1,6 +1,6 @@
 package com.second.jtrace.core.response;
 
-import com.gy4j.jvm.eye.core.util.JsonUtils;
+import com.second.jtrace.core.protocol.GsonSerializer;
 import lombok.Data;
 
 /**
@@ -23,6 +23,11 @@ public class BaseResponse implements IResponse {
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setMsg(msg);
         baseResponse.setStatus(STATUS_FAIL);
-        return JsonUtils.parseJson(JsonUtils.toJson(baseResponse), responseClass);
+        return responseClass.cast(baseResponse);
+    }
+
+    @Override
+    public int getMessageTypeId() {
+        return 0;
     }
 }
