@@ -1,19 +1,18 @@
-package com.second.jtrace.core.client;
+package com.second.jtrace.client;
 
 
 
 
 import com.second.jtrace.common.SystemInfoUtil;
+import com.second.jtrace.core.client.IClient;
 import com.second.jtrace.core.command.CommandTask;
 import com.second.jtrace.core.command.ICommand;
 import com.second.jtrace.core.response.IAsyncResponse;
 import com.second.jtrace.core.response.IResponse;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,15 +24,10 @@ public class JTraceClient implements IClient {
 
         private static final Logger logger = LoggerFactory.getLogger(JTraceClient.class);
 
-        @Getter
         private String clientId;
-        @Getter
         private String clientName;
-        @Getter
         private String serverHost;
-        @Getter
         private int serverPort;
-        @Getter
         private Instrumentation instrumentation;
 
         private ScheduledExecutorService executorService;
@@ -64,8 +58,14 @@ public class JTraceClient implements IClient {
 
         }
 
-        private void startNettyClient() {
-            EventLoopGroup group = new NioEventLoopGroup();
+    private void startNettyClient() {
+        executorService.scheduleWithFixedDelay(() -> {
+            if (channel != null && channel.isActive()) {
+                return;
+            }
+
+            logger.info("Attempting to connect to server at {}:{}", serverHost, serverPort);
+            group = new NioEventLoopGroup();
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.group(group)
                     .channel(NioSocketChannel.class)
@@ -76,16 +76,32 @@ public class JTraceClient implements IClient {
                 channel = future.channel();
                 logger.info("Connected to server at {}:{}", serverHost, serverPort);
             } catch (Exception e) {
-                logger.error("Failed to connect to server: {}", e.getMessage());
+                logger.error("Failed to connect to server: {}. Retrying in 5 seconds...", e.getMessage());
             }
-        }
+        }, 0, 5, TimeUnit.SECONDS);
+    }
 
-        public Future<Boolean> submit(CommandTask task) {
+    public Future<Boolean> submit(CommandTask task) {
             return executorService.submit(task);
         }
 
 
-        public void write(ICommand command, IResponse response) {
+    @Override
+    public Instrumentation getInstrumentation() {
+        return instrumentation;
+    }
+
+    @Override
+    public String getClientId() {
+        return clientId;
+    }
+
+    @Override
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void write(ICommand command, IResponse response) {
             response.setClientId(clientId);
             response.setCommandId(command.getCommandId());
             if (response instanceof IAsyncResponse) {
@@ -104,9 +120,13 @@ public class JTraceClient implements IClient {
             }
             channel = null;
             if (group != null) {
-                group.shutdownGracefully(200,200, TimeUnit.MILLISECONDS);
+                shutdownWorkGroup();
             }
             group = null;
+            if(executorService != null) {
+                executorService.shutdown();
+            }
+            executorService = null;
             logger.info("JTraceClient closed");
         }
 

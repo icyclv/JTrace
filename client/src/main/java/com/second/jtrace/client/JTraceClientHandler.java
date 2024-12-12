@@ -1,5 +1,6 @@
-package com.second.jtrace.core.client;
+package com.second.jtrace.client;
 
+import com.second.jtrace.common.JTraceConstants;
 import com.second.jtrace.core.command.CommandTask;
 import com.second.jtrace.core.command.ICommand;
 import com.second.jtrace.core.protocol.IMessage;
@@ -13,7 +14,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static com.second.jtrace.common.JTraceConstants.TIME_OUT;
 
 public class JTraceClientHandler extends SimpleChannelInboundHandler<IMessage> {
 
@@ -33,7 +33,7 @@ public class JTraceClientHandler extends SimpleChannelInboundHandler<IMessage> {
                 ICommand command = (ICommand) message;
                 Future<Boolean> future = client.submit(new CommandTask(command, client));
                 try{
-                    if(future.get(TIME_OUT, TimeUnit.SECONDS)){
+                    if(future.get(JTraceConstants.TIME_OUT, TimeUnit.SECONDS)){
                         logger.info("Command {} executed successfully", command.getCommandId());
                     }
                 } catch (InterruptedException e) {

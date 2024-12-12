@@ -1,8 +1,8 @@
-package com.second.jtrace.core.client;
+package com.second.jtrace.client;
 
 import com.second.jtrace.core.protocol.MessageCodec;
 import com.second.jtrace.core.protocol.PingMessage;
-import com.second.jtrace.core.protocol.ProcotolFrameDecoder;
+import com.second.jtrace.core.protocol.ProtocolFrameDecoder;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
@@ -14,9 +14,9 @@ import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
 
 public class JTraceClientInitializer extends ChannelInitializer<SocketChannel> {
-    private JTraceClient jTraceClient;
-    MessageCodec MESSAGE_CODEC = new MessageCodec();
-    LoggingHandler LOGGING_HANDLER = new LoggingHandler(LogLevel.WARN);
+    private final JTraceClient jTraceClient;
+    private final MessageCodec MESSAGE_CODEC = new MessageCodec();
+    private final LoggingHandler LOGGING_HANDLER = new LoggingHandler(LogLevel.WARN);
 
 
 
@@ -27,23 +27,36 @@ public class JTraceClientInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
-        ch.pipeline().addLast( new ProcotolFrameDecoder());
+        ch.pipeline().addLast( new ProtocolFrameDecoder());
         ch.pipeline().addLast(LOGGING_HANDLER);
         ch.pipeline().addLast(MESSAGE_CODEC);
         ch.pipeline().addLast(new IdleStateHandler(0, 5, 0));
         ch.pipeline().addLast(new ChannelDuplexHandler() {
             @Override
             public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception{
-                IdleStateEvent event = (IdleStateEvent) evt;
-                if (event.state() == IdleState.WRITER_IDLE) {
-                    ctx.writeAndFlush(new PingMessage());
+                if (evt instanceof IdleStateEvent) {
+                    IdleStateEvent event = (IdleStateEvent) evt;
+                    handleIdleEvent(ctx, event);
                 }
             }
         });
         ch.pipeline().addLast(new JTraceClientHandler(jTraceClient));
 
 
+    }
 
 
+    private void handleIdleEvent(ChannelHandlerContext ctx, IdleStateEvent event) {
+        switch (event.state()) {
+            case READER_IDLE:
+                ctx.close();
+
+                break;
+            case WRITER_IDLE:
+                ctx.writeAndFlush(new PingMessage());
+                break;
+            case ALL_IDLE:
+                break;
+        }
     }
 }

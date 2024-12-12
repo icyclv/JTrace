@@ -46,6 +46,15 @@ public abstract class StringUtils {
         return t.getMessage();
     }
 
+    public static String UUID(boolean simple) {
+        if (simple) {
+            return UUID.randomUUID().toString().replace("-", "");
+        } else {
+            return UUID.randomUUID().toString();
+        }
+    }
+
+
     /**
      * 将一个对象转换为字符串
      *

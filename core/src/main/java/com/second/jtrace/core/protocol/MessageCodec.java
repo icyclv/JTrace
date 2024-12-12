@@ -2,7 +2,7 @@ package com.second.jtrace.core.protocol;
 
 
 import com.second.jtrace.common.JTraceConstants;
-import com.second.jtrace.core.protocol.Type.MessageTypeMapper;
+import com.second.jtrace.core.util.VersionUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -10,6 +10,7 @@ import io.netty.handler.codec.MessageToMessageCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.List;
 
 @ChannelHandler.Sharable
@@ -20,11 +21,11 @@ public class MessageCodec extends MessageToMessageCodec<ByteBuf, IMessage> {
     public void encode(ChannelHandlerContext ctx, IMessage msg, List<Object> outList) throws Exception {
         ByteBuf out = ctx.alloc().buffer();
         out.writeInt(JTraceConstants.MAGIC_NUMBER); // 4 bytes magic number
-        out.writeByte(JTraceConstants.VERSION); // 1 byte version
+        out.writeByte(JTraceConstants.VERSION[0]); // 1 byte version
+        out.writeByte(JTraceConstants.VERSION[1]); // 1 byte version
+        out.writeByte(JTraceConstants.VERSION[2]); // 1 byte version
         out.writeByte(msg.getMessageTypeId()); // 1 byte class type
 
-        out.writeByte(0xff); // 1 byte padding
-        out.writeByte(0xff); // 1 byte padding
 
         // 6. 获取内容的字节数组
         byte[] bytes = GsonSerializer.serialize(msg);
@@ -43,14 +44,17 @@ public class MessageCodec extends MessageToMessageCodec<ByteBuf, IMessage> {
             ctx.close();
             return;
         }
-        byte version = in.readByte();
-        if (version > JTraceConstants.VERSION) {
-            logger.warn("The message version is higher than the current version: {}", version);
+        byte[] version = new byte[3];
+        for(int i = 0; i < 3; i++) {
+            version[i] = in.readByte();
+        }
+        if(VersionUtil.compareVersion(version, JTraceConstants.VERSION) != 0) {
+            logger.warn("Received invalid version: " + Arrays.toString(version) + " from " + ctx.channel().remoteAddress());
+            return;
         }
 
         byte messageType = in.readByte();
-        in.readByte();
-        in.readByte();
+
 
         int length = in.readInt();
         byte[] bytes = new byte[length];

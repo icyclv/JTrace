@@ -1,6 +1,6 @@
 package com.second.jtrace.core.response;
 
-import com.second.jtrace.core.protocol.GsonSerializer;
+import com.second.jtrace.core.protocol.MessageTypeMapper;
 import lombok.Data;
 
 /**
@@ -28,6 +28,6 @@ public class BaseResponse implements IResponse {
 
     @Override
     public int getMessageTypeId() {
-        return 0;
+        return MessageTypeMapper.TypeList.BaseResponse.ordinal();
     }
 }

@@ -1,11 +1,11 @@
 package com.second.jtrace.common;
 
+
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class SystemInfoUtil {
-
     // 本机IP地址
     public static final String LOCAL_IP_ADDRESS;
     // 当前Java进程的PID
@@ -30,7 +30,6 @@ public class SystemInfoUtil {
             InetAddress inetAddress = InetAddress.getLocalHost();
             return inetAddress.getHostAddress();
         } catch (UnknownHostException e) {
-            e.printStackTrace();
             return "Unknown IP";
         }
     }
@@ -54,14 +53,8 @@ public class SystemInfoUtil {
             InetAddress inetAddress = InetAddress.getLocalHost();
             return inetAddress.getHostName();
         } catch (UnknownHostException e) {
-            e.printStackTrace();
             return "Unknown Host";
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println("本机IP地址: " + LOCAL_IP_ADDRESS);
-        System.out.println("当前进程PID: " + PROCESS_ID);
-        System.out.println("主机名称: " + HOST_NAME);
-    }
 }

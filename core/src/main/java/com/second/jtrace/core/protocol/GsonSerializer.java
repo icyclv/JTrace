@@ -19,6 +19,11 @@ public class GsonSerializer{
         return json.getBytes(StandardCharsets.UTF_8);
     }
 
+    public static String toJson(Object object) {
+        Gson gson = new GsonBuilder().registerTypeAdapter(Class.class, new ClassCodec()).create();
+        return gson.toJson(object);
+    }
+
     static class ClassCodec implements JsonSerializer<Class<?>>, JsonDeserializer<Class<?>> {
 
         @Override
