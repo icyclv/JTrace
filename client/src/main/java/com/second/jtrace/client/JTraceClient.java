@@ -41,7 +41,7 @@ public class JTraceClient implements IClient {
             this.clientName = clientName;
             this.serverHost = serverHost;
             this.serverPort = serverPort;
-            this.clientId = "JTraceClient-"+ SystemInfoUtil.JVM_NAME + "-" + System.currentTimeMillis();
+//            this.clientId = "JTraceClient-"+ SystemInfoUtil.JVM_NAME + "-" + System.currentTimeMillis();
             // 初始化 Netty 客户端
             executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
                 private AtomicInteger seq = new AtomicInteger(1);
@@ -94,6 +94,11 @@ public class JTraceClient implements IClient {
     @Override
     public String getClientId() {
         return clientId;
+    }
+
+    @Override
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     @Override

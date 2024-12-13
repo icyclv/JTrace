@@ -11,6 +11,7 @@ public interface IClient {
 
     String getClientId();
 
+    void setClientId(String clientId);
     String getClientName();
 
     void write(ICommand command, IResponse response);

@@ -3,7 +3,7 @@ package com.second.jtrace.common;
 import java.io.File;
 
 public class JTraceConstants {
-    public static final byte[] VERSION =[1,0,0];
+    public static final byte[] VERSION = new byte[]{1, 0, 0};
     public static final String JTRACE_HOME = ".jtrace";
     public static final String JTRACE_AGENT_JAR = "jtrace-agent.jar";
     public static final String JTRACE_AGENT_CLASS = "com.second.jtrace.agent.JTraceAgent";

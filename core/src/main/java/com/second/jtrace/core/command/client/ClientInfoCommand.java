@@ -8,6 +8,7 @@ import com.second.jtrace.core.command.AbstractCommand;
 import com.second.jtrace.core.command.client.response.ClientInfoResponse;
 import com.second.jtrace.core.command.client.vo.ClientInfoVO;
 import com.second.jtrace.core.response.IResponse;
+import com.second.jtrace.core.util.StringUtils;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import java.net.UnknownHostException;
 public class ClientInfoCommand extends AbstractCommand {
     private static final Logger logger = LoggerFactory.getLogger(ClientInfoCommand.class);
 
+    private String clientId;
 
     @Override
     public Class<? extends IResponse> getResponseClass() {
@@ -36,7 +38,9 @@ public class ClientInfoCommand extends AbstractCommand {
 
     @Override
     public IResponse executeForResponse(IClient client) {
-        // 获取并设置服务器的名称和IP信息
+        if(!StringUtils.isBlank(clientId)){
+            client.setClientId(clientId);
+        }
         String host =  SystemInfoUtil.HOST_NAME;
         String ip = SystemInfoUtil.LOCAL_IP_ADDRESS;
 
@@ -46,9 +50,9 @@ public class ClientInfoCommand extends AbstractCommand {
         clientInfo.setVersion(getVersion());
 
 
-        // 设置客户端名称和ID
+
         clientInfo.setClientName(client.getClientName());
-        clientInfo.setClientId(client.getClientId());
+        clientInfo.setClientId(clientId);
 
         ClientInfoResponse clientInfoResponse = new ClientInfoResponse();
         clientInfoResponse.setClientInfo(clientInfo);

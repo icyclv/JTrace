@@ -1,4 +1,4 @@
-package netty;
+package com.second.jtrace.server.netty;
 
 
 import com.second.jtrace.core.command.ICommand;
