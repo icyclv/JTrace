@@ -61,6 +61,7 @@ public class MessageCodec extends MessageToMessageCodec<ByteBuf, IMessage> {
         in.readBytes(bytes, 0, length);
 
         Class<? extends IMessage> messageClass = MessageTypeMapper.getClass(messageType);
+        System.out.printf("messageType: %s, messageClass: %s\n", messageType, messageClass);
         IMessage message = GsonSerializer.deserialize(messageClass, bytes);
         out.add(message);
     }

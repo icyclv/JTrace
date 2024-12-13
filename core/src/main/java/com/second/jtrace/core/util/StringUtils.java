@@ -998,4 +998,27 @@ public abstract class StringUtils {
         }
         return Collections.emptyList();
     }
+
+    public static String getStackTraceString(StackTraceElement[] stackTraceElements) {
+        StringBuffer sb = new StringBuffer();
+        if (stackTraceElements == null || stackTraceElements.length == 0) {
+            return sb.toString();
+        }
+        sb.append("@").append(stackTraceElements[0].getClassName()).append(".")
+                .append(stackTraceElements[0].getMethodName()).append("()\n");
+        int skip = 1;
+        for (int index = skip; index < stackTraceElements.length; index++) {
+            StackTraceElement ste = stackTraceElements[index];
+            sb.append("        at ")
+                    .append(ste.getClassName())
+                    .append(".")
+                    .append(ste.getMethodName())
+                    .append("(")
+                    .append(ste.getFileName())
+                    .append(":")
+                    .append(ste.getLineNumber())
+                    .append(")\n");
+        }
+        return sb.toString();
+    }
 }

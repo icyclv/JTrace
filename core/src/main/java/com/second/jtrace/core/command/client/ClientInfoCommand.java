@@ -7,6 +7,7 @@ import com.second.jtrace.core.client.IClient;
 import com.second.jtrace.core.command.AbstractCommand;
 import com.second.jtrace.core.command.client.response.ClientInfoResponse;
 import com.second.jtrace.core.command.client.vo.ClientInfoVO;
+import com.second.jtrace.core.protocol.MessageTypeMapper;
 import com.second.jtrace.core.response.IResponse;
 import com.second.jtrace.core.util.StringUtils;
 import lombok.Data;
@@ -70,8 +71,5 @@ public class ClientInfoCommand extends AbstractCommand {
         return version.toString();
     }
 
-    @Override
-    public int getMessageTypeId() {
-        return 0;
-    }
+
 }

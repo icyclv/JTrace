@@ -26,8 +26,5 @@ public class BaseResponse implements IResponse {
         return responseClass.cast(baseResponse);
     }
 
-    @Override
-    public int getMessageTypeId() {
-        return MessageTypeMapper.TypeList.BaseResponse.ordinal();
-    }
+
 }

@@ -43,8 +43,5 @@ public class VMOptionCommand extends AbstractCommand {
         return VMOptionResponse.class;
     }
 
-    @Override
-    public int getMessageTypeId() {
-        return MessageTypeMapper.TypeList.VmOptionCommand.ordinal();
-    }
+
 }

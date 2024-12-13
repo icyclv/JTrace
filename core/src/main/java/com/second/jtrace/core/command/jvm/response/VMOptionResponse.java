@@ -12,8 +12,4 @@ import java.util.List;
 public class VMOptionResponse extends BaseResponse {
     private List<VMOptionVO> vmOptions;
 
-    @Override
-    public int getMessageTypeId() {
-        return MessageTypeMapper.TypeList.VmOptionResponse.ordinal();
-    }
 }

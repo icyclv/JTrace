@@ -21,8 +21,5 @@ public class SysEnvCommand extends AbstractCommand {
         return SysEnvResponse.class;
     }
 
-    @Override
-    public int getMessageTypeId() {
-        return MessageTypeMapper.TypeList.SysEnvCommand.ordinal();
-    }
+
 }

@@ -57,11 +57,11 @@ public class JTraceServerHandler extends SimpleChannelInboundHandler<IMessage> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, IMessage message) throws Exception {
         if(message instanceof IResponse) {
-            if(message instanceof PingMessage){
-                logger.debug("Received ping message from {}", ctx.channel().remoteAddress());
-            }else {
-                server.handleResponse((IResponse) message, ctx.channel());
-            }
+
+        server.handleResponse((IResponse) message, ctx.channel());
+
+        }else  if(message instanceof PingMessage){
+            logger.debug("Received ping message from {}", ctx.channel().remoteAddress());
         }else {
             logger.error("Unknown message type: {}", message.getClass().getName());
         }

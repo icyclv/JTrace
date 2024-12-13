@@ -17,8 +17,5 @@ public class HeapDumpResponse extends BaseResponse {
 
     private byte[] fileContent;
 
-    @Override
-    public int getMessageTypeId() {
-        return MessageTypeMapper.TypeList.HeapDumpResponse.ordinal();
-    }
+
 }

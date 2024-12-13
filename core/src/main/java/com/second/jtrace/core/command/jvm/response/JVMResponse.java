@@ -17,8 +17,4 @@ import lombok.Data;
 public class JVMResponse extends BaseResponse {
     private JVMInfoVO jvmInfo;
 
-    @Override
-    public int getMessageTypeId() {
-        return MessageTypeMapper.TypeList.JVMResponse.ordinal();
-    }
 }

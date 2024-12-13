@@ -1,5 +1,7 @@
 package com.second.jtrace.core.protocol;
 
 public interface IMessage {
-    public int getMessageTypeId();
+    public default int getMessageTypeId(){
+        return MessageTypeMapper.TypeList.getOrdinalByClassName(this);
+    }
 }

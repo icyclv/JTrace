@@ -18,8 +18,5 @@ import java.util.Map;
 public class SysEnvResponse extends BaseResponse {
     private Map<String, String> info = new LinkedHashMap<String, String>();
 
-    @Override
-    public int getMessageTypeId() {
-        return MessageTypeMapper.TypeList.SysEnvResponse.ordinal();
-    }
+
 }

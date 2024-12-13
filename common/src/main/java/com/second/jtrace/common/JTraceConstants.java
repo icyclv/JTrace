@@ -18,7 +18,9 @@ public class JTraceConstants {
     public static final String TYPE_NON_HEAP = "non_heap";
     public static final String TYPE_BUFFER_POOL = "buffer_pool";
     public static final String UNKNOWN = "Unknown";
-
+    public static final String ACCESS_POINT_BEFORE = "before";
+    public static final String ACCESS_POINT_AFTER = "after";
+    public static final String ACCESS_POINT_EXCEPTION = "exception";
     static{
         TMP_DIR = getTempDir();
 

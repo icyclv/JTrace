@@ -62,8 +62,5 @@ public class HeapDumpCommand extends AbstractCommand {
         hotSpotDiagnosticMXBean.dumpHeap(file, live);
     }
 
-    @Override
-    public int getMessageTypeId() {
-        return MessageTypeMapper.TypeList.HeapDumpCommand.ordinal();
-    }
+
 }

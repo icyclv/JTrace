@@ -1,7 +1,9 @@
 package com.second.jtrace.core.protocol;
 
-import com.second.jtrace.core.command.jvm.HeapDumpCommand;
-import com.second.jtrace.core.command.jvm.response.HeapDumpResponse;
+import com.second.jtrace.core.command.client.ClientInfoCommand;
+import com.second.jtrace.core.command.client.response.ClientInfoResponse;
+import com.second.jtrace.core.command.jvm.*;
+import com.second.jtrace.core.command.jvm.response.*;
 import com.second.jtrace.core.response.BaseResponse;
 
 import java.util.HashMap;
@@ -23,14 +25,23 @@ public class MessageTypeMapper {
         SysEnvResponse,
         SysPropCommand,
         SysPropResponse,
-        VmOptionCommand,
-        VmOptionResponse,
+        VMOptionCommand,
+        VMOptionResponse,
         ClientInfoCommand,
         ClientInfoResponse,
 
 
-        PingMessage,
-        PongMessage,
+        PingMessage;
+
+        public static int getOrdinalByClassName(Object obj) {
+            try {
+                String className = obj.getClass().getSimpleName();
+
+                return TypeList.valueOf(className).ordinal();
+            } catch (IllegalArgumentException e) {
+                return -1; // 或者 throw new IllegalArgumentException("No matching enum for class: " + obj.getClass().getSimpleName());
+            }
+        }
 
     }
 
@@ -38,20 +49,20 @@ public class MessageTypeMapper {
         typeMapper.put(TypeList.BaseResponse.ordinal(), BaseResponse.class);
         typeMapper.put(TypeList.HeapDumpCommand.ordinal(), HeapDumpCommand.class);
         typeMapper.put(TypeList.HeapDumpResponse.ordinal(), HeapDumpResponse.class);
-        typeMapper.put(TypeList.JVMCommand.ordinal(), HeapDumpCommand.class);
-        typeMapper.put(TypeList.JVMResponse.ordinal(), HeapDumpResponse.class);
-        typeMapper.put(TypeList.MemoryCommand.ordinal(), HeapDumpCommand.class);
-        typeMapper.put(TypeList.MemoryResponse.ordinal(), HeapDumpResponse.class);
-        typeMapper.put(TypeList.SysEnvCommand.ordinal(), HeapDumpCommand.class);
-        typeMapper.put(TypeList.SysEnvResponse.ordinal(), HeapDumpResponse.class);
-        typeMapper.put(TypeList.SysPropCommand.ordinal(), HeapDumpCommand.class);
-        typeMapper.put(TypeList.SysPropResponse.ordinal(), HeapDumpResponse.class);
-        typeMapper.put(TypeList.VmOptionCommand.ordinal(), HeapDumpCommand.class);
-        typeMapper.put(TypeList.VmOptionResponse.ordinal(), HeapDumpResponse.class);
-        typeMapper.put(TypeList.PingMessage.ordinal(), HeapDumpCommand.class);
-        typeMapper.put(TypeList.PongMessage.ordinal(), HeapDumpResponse.class);
-        typeMapper.put(TypeList.ClientInfoCommand.ordinal(), HeapDumpCommand.class);
-        typeMapper.put(TypeList.ClientInfoResponse.ordinal(), HeapDumpResponse.class);
+        typeMapper.put(TypeList.JVMCommand.ordinal(), JVMCommand.class);
+        typeMapper.put(TypeList.JVMResponse.ordinal(), JVMResponse.class);
+        typeMapper.put(TypeList.MemoryCommand.ordinal(), MemoryCommand.class);
+
+        typeMapper.put(TypeList.MemoryResponse.ordinal(), MemoryResponse.class);
+        typeMapper.put(TypeList.SysEnvCommand.ordinal(), SysEnvCommand.class);
+        typeMapper.put(TypeList.SysEnvResponse.ordinal(), SysEnvResponse.class);
+        typeMapper.put(TypeList.SysPropCommand.ordinal(), SysPropCommand.class);
+        typeMapper.put(TypeList.SysPropResponse.ordinal(), SysPropResponse.class);
+        typeMapper.put(TypeList.VMOptionCommand.ordinal(), VMOptionCommand.class);
+        typeMapper.put(TypeList.VMOptionResponse.ordinal(), VMOptionResponse.class);
+        typeMapper.put(TypeList.PingMessage.ordinal(), PingMessage.class);
+        typeMapper.put(TypeList.ClientInfoCommand.ordinal(), ClientInfoCommand.class);
+        typeMapper.put(TypeList.ClientInfoResponse.ordinal(), ClientInfoResponse.class);
 
 
     }

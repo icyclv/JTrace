@@ -20,8 +20,5 @@ public class AbstractAsyncResponse extends BaseResponse implements IAsyncRespons
         return this.sessionId;
     }
 
-    @Override
-    public int getMessageTypeId() {
-        return 0;
-    }
+
 }

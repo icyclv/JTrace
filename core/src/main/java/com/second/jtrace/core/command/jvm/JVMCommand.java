@@ -202,11 +202,7 @@ public class JVMCommand extends AbstractCommand {
         return ids == null ? 0 : ids.length;
     }
 
-    @Override
-    public int getMessageTypeId() {
-        return MessageTypeMapper.TypeList.JVMCommand.ordinal();
 
-    }
 
     @Override
     public Class<? extends IResponse> getResponseClass() {

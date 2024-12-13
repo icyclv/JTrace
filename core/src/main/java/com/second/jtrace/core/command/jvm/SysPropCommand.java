@@ -26,8 +26,5 @@ public class SysPropCommand extends AbstractCommand {
         return SysPropResponse.class;
     }
 
-    @Override
-    public int getMessageTypeId() {
-        return MessageTypeMapper.TypeList.SysPropCommand.ordinal();
-    }
+
 }

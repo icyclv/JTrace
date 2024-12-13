@@ -19,8 +19,5 @@ import java.util.List;
 public class MemoryResponse extends BaseResponse {
     private List<MemoryInfoVO> memoryInfos;
 
-    @Override
-    public int getMessageTypeId() {
-        return MessageTypeMapper.TypeList.MemoryResponse.ordinal();
-    }
+
 }

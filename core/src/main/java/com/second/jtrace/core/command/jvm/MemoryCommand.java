@@ -29,10 +29,7 @@ public class MemoryCommand extends AbstractCommand {
         return MemoryResponse.class;
     }
 
-    @Override
-    public int getMessageTypeId() {
-        return MessageTypeMapper.TypeList.MemoryCommand.ordinal();
-    }
+
 
     public List<MemoryInfoVO> getMemoryInfos() {
         List<MemoryPoolMXBean> memoryPoolMXBeans = ManagementFactory.getMemoryPoolMXBeans();
