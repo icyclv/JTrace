@@ -5,7 +5,6 @@ import com.second.jtrace.core.response.IResponse;
 import com.second.jtrace.core.util.StringUtils;
 import com.second.jtrace.server.netty.JTraceServer;
 
-import java.util.UUID;
 
 public class CommandUtil {
     public static <T extends IResponse> T dealCommand(JTraceServer eyeServer, String clientId, ICommand command) {
