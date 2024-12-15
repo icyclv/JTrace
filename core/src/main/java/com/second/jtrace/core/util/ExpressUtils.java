@@ -8,13 +8,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author gy4j
- * 功能：
- * 日期：2022/11/26
- * 版本       开发者     描述
- * 1.0.0     gy4j     ...
- */
 public class ExpressUtils {
     private static final Logger logger = LoggerFactory.getLogger(ExpressUtils.class);
 

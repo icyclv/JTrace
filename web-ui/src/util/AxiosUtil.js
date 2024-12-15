@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {Message} from 'element-ui';
 
 import {getSession} from './SessionUtil';
 let axiosWrap = axios;

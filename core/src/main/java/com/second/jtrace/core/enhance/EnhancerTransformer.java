@@ -43,13 +43,7 @@ import java.util.Set;
 
 import static java.lang.System.arraycopy;
 
-/**
- * @author gy4j
- * 功能：
- * 日期：2022/11/26
- * 版本       开发者     描述
- * 1.0.0     gy4j     ...
- */
+
 public class EnhancerTransformer implements ClassFileTransformer {
     private static final Logger logger = LoggerFactory.getLogger(EnhancerTransformer.class);
 

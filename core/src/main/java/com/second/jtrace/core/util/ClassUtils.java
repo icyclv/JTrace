@@ -31,6 +31,51 @@ public class ClassUtils {
     }
 
 
+    /**
+     * 获取类的加载文件来源
+     *
+     * @param clazz
+     * @return
+     */
+    public static String getCodeSource(final Class<?> clazz) {
+        CodeSource cs = clazz.getProtectionDomain().getCodeSource();
+        if (null == cs || null == cs.getLocation() || null == cs.getLocation().getFile()) {
+            return JTraceConstants.UNKNOWN;
+        }
+        return cs.getLocation().getFile();
+    }
+
+    /**
+     * 获取类的类加载器列表
+     *
+     * @param clazz
+     * @return
+     */
+    public static String[] getClassLoaders(Class<?> clazz) {
+        if (clazz.getClassLoader() == null) {
+            return null;
+        }
+        List<String> result = new ArrayList<String>();
+        ClassLoader classLoader = clazz.getClassLoader();
+        while (classLoader != null) {
+            result.add(0, classLoader.toString());
+            classLoader = classLoader.getParent();
+        }
+        return result.toArray(new String[]{});
+    }
+
+    /**
+     * 获取类的类加载器
+     *
+     * @param clazz
+     * @return
+     */
+    public static String getClassLoader(Class<?> clazz) {
+        if (clazz.getClassLoader() == null) {
+            return JTraceConstants.NONE;
+        }
+        return clazz.getClassLoader().toString();
+    }
 
     public static String[] getClassNameList(Class[] classes) {
         List<String> list = new ArrayList<String>();

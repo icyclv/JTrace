@@ -6,9 +6,6 @@ import lombok.Data;
 
 import java.util.Date;
 
-/**
- * @author gy4j
- */
 @Data
 public class StackInfoVO {
     private Date ts;

@@ -11,13 +11,7 @@ import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author gy4j
- * 功能：
- * 日期：2022/11/26-16:40
- * 版本       开发者     描述
- * 1.0.0     gy4j     ...
- */
+
 public class ThreadUtils {
     private static ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 

@@ -9,10 +9,7 @@ import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -181,6 +178,111 @@ public class ClassLoaderUtils {
             } catch (Throwable e) {
                 // ignore
                 return null;
+            }
+        }
+        return null;
+    }
+
+
+
+    /**
+     * 获取classLoader的hashCode
+     *
+     * @param classLoader
+     * @return
+     */
+    public static String getClassLoaderHash(ClassLoader classLoader) {
+        if (classLoader == null) {
+            return JTraceConstants.NONE;
+        } else {
+            return Integer.toHexString(classLoader.hashCode());
+        }
+    }
+
+    /**
+     * 根据类名模糊搜索类列表
+     *
+     * @param instrumentation
+     * @param className
+     * @return
+     */
+    public static Set<Class<?>> findClasses(Instrumentation instrumentation
+            , String className) {
+        if (StringUtils.isBlank(className)) {
+            return Collections.emptySet();
+        }
+        return findClasses(instrumentation, className, null);
+    }
+
+    /**
+     * 根据类名模糊搜索类列表
+     *
+     * @param instrumentation
+     * @param className
+     * @param classLoaderHash
+     * @return
+     */
+    public static Set<Class<?>> findClasses(Instrumentation instrumentation
+            , String className, String classLoaderHash) {
+        Class<?>[] loadedClasses = instrumentation.getAllLoadedClasses();
+        Set<Class<?>> clazzSet = new LinkedHashSet<>();
+        for (Class<?> clazz : loadedClasses) {
+            // 检查累加器是否匹配
+            if (classLoaderHash != null) {
+                String hash = ClassLoaderUtils.getClassLoaderHash(clazz.getClassLoader());
+                if (!classLoaderHash.equals(hash)) {
+                    continue;
+                }
+            }
+
+            // 检查类名是否匹配
+            if (clazz.getName().indexOf(className) != -1) {
+                clazzSet.add(clazz);
+            }
+        }
+        return clazzSet;
+    }
+
+    /**
+     * 根据类名和累加载器hash精确匹配
+     *
+     * @param instrumentation
+     * @param className
+     * @param classLoaderHash
+     * @return
+     */
+    public static Set<Class<?>> findClassesOnly(Instrumentation instrumentation
+            , String className, String classLoaderHash) {
+        Class<?>[] loadedClasses = instrumentation.getAllLoadedClasses();
+        Set<Class<?>> clazzList = new LinkedHashSet<>();
+        for (Class<?> clazz : loadedClasses) {
+            String hash = ClassLoaderUtils.getClassLoaderHash(clazz.getClassLoader());
+            if (clazz.getName().equals(className)
+                    && (StringUtils.isBlank(classLoaderHash) || hash.equals(classLoaderHash))) {
+                clazzList.add(clazz);
+            }
+        }
+        return clazzList;
+    }
+
+
+    /**
+     * 搜索classloader
+     *
+     * @param inst
+     * @param name
+     * @return
+     */
+    public static ClassLoader getClassLoaderByName(Instrumentation inst, String name) {
+        if (name == null || name.isEmpty()) {
+            return null;
+        }
+        for (Class<?> clazz : inst.getAllLoadedClasses()) {
+            ClassLoader classLoader = clazz.getClassLoader();
+            if (classLoader != null) {
+                if (classLoader.getClass().getName().equals(name)) {
+                    return classLoader;
+                }
             }
         }
         return null;
