@@ -1,5 +1,6 @@
 package com.second.jtrace.core.response;
 
+import com.second.jtrace.core.protocol.GsonSerializer;
 import com.second.jtrace.core.protocol.MessageTypeMapper;
 import lombok.Data;
 
@@ -17,7 +18,7 @@ public class BaseResponse implements IResponse {
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setMsg(msg);
         baseResponse.setStatus(STATUS_FAIL);
-        return responseClass.cast(baseResponse);
+        return GsonSerializer.fromJson(GsonSerializer.toJson(baseResponse), responseClass);
     }
 
 

@@ -24,6 +24,11 @@ public class GsonSerializer{
         return gson.toJson(object);
     }
 
+    public static <T> T fromJson(String json, Class<T> clazz) {
+        Gson gson = new GsonBuilder().registerTypeAdapter(Class.class, new ClassCodec()).create();
+        return gson.fromJson(json, clazz);
+    }
+
     static class ClassCodec implements JsonSerializer<Class<?>>, JsonDeserializer<Class<?>> {
 
         @Override

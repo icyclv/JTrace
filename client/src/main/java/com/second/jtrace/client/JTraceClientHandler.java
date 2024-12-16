@@ -22,8 +22,8 @@ public class JTraceClientHandler extends SimpleChannelInboundHandler<IMessage> {
     private static final Logger logger = LoggerFactory.getLogger(JTraceClientHandler.class);
     private JTraceClient client;
 
-    public JTraceClientHandler(JTraceClient jTraceClient) {
-        this.client = jTraceClient;
+    public JTraceClientHandler(JTraceClient client) {
+        this.client = client;
     }
 
     @Override

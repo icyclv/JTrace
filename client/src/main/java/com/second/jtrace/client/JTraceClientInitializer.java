@@ -9,19 +9,18 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
 
 public class JTraceClientInitializer extends ChannelInitializer<SocketChannel> {
-    private final JTraceClient jTraceClient;
+    private final JTraceClient client;
     private final MessageCodec MESSAGE_CODEC = new MessageCodec();
     private final LoggingHandler LOGGING_HANDLER = new LoggingHandler(LogLevel.WARN);
 
 
 
-    public JTraceClientInitializer(JTraceClient jTraceClient) {
-        this.jTraceClient = jTraceClient;
+    public JTraceClientInitializer(JTraceClient client) {
+        this.client = client;
 
     }
 
@@ -40,7 +39,7 @@ public class JTraceClientInitializer extends ChannelInitializer<SocketChannel> {
                 }
             }
         });
-        ch.pipeline().addLast(new JTraceClientHandler(jTraceClient));
+        ch.pipeline().addLast(new JTraceClientHandler(client));
 
 
     }
@@ -50,7 +49,6 @@ public class JTraceClientInitializer extends ChannelInitializer<SocketChannel> {
         switch (event.state()) {
             case READER_IDLE:
                 ctx.close();
-
                 break;
             case WRITER_IDLE:
                 ctx.writeAndFlush(new PingMessage());

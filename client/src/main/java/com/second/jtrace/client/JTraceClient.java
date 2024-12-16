@@ -7,6 +7,7 @@ import com.second.jtrace.common.SystemInfoUtil;
 import com.second.jtrace.core.client.IClient;
 import com.second.jtrace.core.command.CommandTask;
 import com.second.jtrace.core.command.ICommand;
+import com.second.jtrace.core.enhance.EnhanceManager;
 import com.second.jtrace.core.response.IAsyncResponse;
 import com.second.jtrace.core.response.IResponse;
 import io.netty.bootstrap.Bootstrap;
@@ -35,7 +36,7 @@ public class JTraceClient implements IClient {
 
         private EventLoopGroup group;
         private Channel channel;
-
+        private EnhanceManager enhanceManager;
         public JTraceClient(Instrumentation instrumentation, String clientName, String serverHost, int serverPort) {
             this.instrumentation = instrumentation;
             this.clientName = clientName;
@@ -53,6 +54,7 @@ public class JTraceClient implements IClient {
                     return t;
                 }
             });
+            EnhanceManager.init(instrumentation);
 
             startNettyClient();
 

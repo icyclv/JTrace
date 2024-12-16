@@ -19,7 +19,7 @@ import com.alibaba.deps.org.objectweb.asm.tree.AbstractInsnNode;
 import com.alibaba.deps.org.objectweb.asm.tree.ClassNode;
 import com.alibaba.deps.org.objectweb.asm.tree.MethodInsnNode;
 import com.alibaba.deps.org.objectweb.asm.tree.MethodNode;
-import com.second.jtrace.core.listener.InvokeListener;
+import com.second.jtrace.core.listener.InvokeTraceable;
 import com.second.jtrace.core.spy.SpyImpl;
 import com.second.jtrace.core.listener.AdviceListenerAdapter;
 import com.second.jtrace.core.listener.AdviceListenerManager;
@@ -159,7 +159,7 @@ public class EnhancerTransformer implements ClassFileTransformer {
                              insnNode != null; insnNode = insnNode.getNext()) {
                             if (insnNode instanceof MethodInsnNode) {
                                 final MethodInsnNode methodInsnNode = (MethodInsnNode) insnNode;
-                                if (listener instanceof InvokeListener && !isIgnoreListener(methodInsnNode)) {
+                                if (listener instanceof InvokeTraceable && !isIgnoreListener(methodInsnNode)) {
                                     AdviceListenerManager.registerInvokeListener(loader, className,
                                             methodInsnNode.owner, methodInsnNode.name, methodInsnNode.desc, listener);
                                 }
@@ -219,7 +219,7 @@ public class EnhancerTransformer implements ClassFileTransformer {
                 if (location instanceof MethodInsnNodeWare) {
                     MethodInsnNodeWare methodInsnNodeWare = (MethodInsnNodeWare) location;
                     MethodInsnNode methodInsnNode = methodInsnNodeWare.methodInsnNode();
-                    if (listener instanceof InvokeListener && !isIgnoreListener(methodInsnNode)) {
+                    if (listener instanceof InvokeTraceable && !isIgnoreListener(methodInsnNode)) {
                         AdviceListenerManager.registerInvokeListener(loader, className,
                                 methodInsnNode.owner, methodInsnNode.name, methodInsnNode.desc, listener);
                     }

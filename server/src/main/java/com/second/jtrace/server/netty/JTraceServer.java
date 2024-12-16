@@ -7,6 +7,7 @@ import com.second.jtrace.core.command.client.vo.ClientInfoVO;
 import com.second.jtrace.core.response.BaseResponse;
 import com.second.jtrace.core.response.IAsyncResponse;
 import com.second.jtrace.core.response.IResponse;
+import com.second.jtrace.server.websocket.WsServerEndpoint;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.group.ChannelGroup;
@@ -78,7 +79,7 @@ public class JTraceServer {
 
         clientChannel.setClientInfoVO(clientInfo);
         clientChannel.setChannel(channel);
-        clientChannel.setEyeServer(this);
+        clientChannel.setServer(this);
         clientChannels.put(clientInfo.getClientId(), clientChannel);
     }
 
@@ -103,7 +104,7 @@ public class JTraceServer {
      * @param response 异步返回消息
      */
     public void asyncResponse(IAsyncResponse response) {
-//        WsServerEndpoint.send(this, response);
+        WsServerEndpoint.send(this, response);
     }
 
     /**

@@ -4,7 +4,7 @@ import java.io.File;
 
 public class JTraceConstants {
     public static final byte[] VERSION = new byte[]{1, 0, 0};
-    public static final String JTRACE_HOME = ".jtrace";
+    public static final String JTRACE_HOME;
     public static final String JTRACE_AGENT_JAR = "jtrace-agent.jar";
     public static final String JTRACE_AGENT_CLASS = "com.second.jtrace.agent.JTraceAgent";
     public static final String JTRACE_AGENT_CLASSLOADER_CLASS = "com.second.jtrace.agent.JTraceClassloader";
@@ -21,22 +21,41 @@ public class JTraceConstants {
     public static final String ACCESS_POINT_BEFORE = "before";
     public static final String ACCESS_POINT_AFTER = "after";
     public static final String ACCESS_POINT_EXCEPTION = "exception";
+    public static final String OUTPUT_DIR;
+
     static{
+        JTRACE_HOME = getJtraceHome();
         TMP_DIR = getTempDir();
+        OUTPUT_DIR = getOutputDir();
 
     }
 
 
-
+    public static String getJtraceHome(){
+        String path="";
+        String dirName = ".jtrace";
+        if(OSUtils.isWindows()){
+            path = System.getenv("LOCALAPPDATA") + File.separator +dirName;
+        }else {
+            path = System.getProperty("user.home") + File.separator +dirName;
+        }
+        File file = new File(path);
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        return path;
+    }
 
     public static String getTempDir(){
-        String path="";
-        if(OSUtils.isWindows()){
-            path = System.getenv("LOCALAPPDATA") + File.separator +JTraceConstants.JTRACE_HOME;
-        }else {
-            path = System.getProperty("user.home") + File.separator + JTraceConstants.JTRACE_HOME;
+        String path=JTRACE_HOME + File.separator + "tmp"+File.separator;
+        File file = new File(path);
+        if(!file.exists()){
+            file.mkdirs();
         }
-        path = path + File.separator + "tmp"+File.separator;
+        return path;
+    }
+    public static String getOutputDir(){
+        String path=JTRACE_HOME + File.separator + "output"+File.separator;
         File file = new File(path);
         if(!file.exists()){
             file.mkdirs();

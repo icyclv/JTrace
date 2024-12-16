@@ -35,7 +35,7 @@ public class ClientChannel {
     private ClientInfoVO clientInfoVO;
 
 
-    private JTraceServer eyeServer;
+    private JTraceServer server;
 
 
     public IResponse sendCommand(ICommand command) {
