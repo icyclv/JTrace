@@ -3,6 +3,7 @@ package com.second.jtrace.server.netty;
 
 import com.second.jtrace.core.command.ICommand;
 import com.second.jtrace.core.command.client.vo.ClientInfoVO;
+import com.second.jtrace.core.protocol.IMessage;
 import com.second.jtrace.core.response.BaseResponse;
 import com.second.jtrace.core.response.IResponse;
 import com.second.jtrace.core.util.StringUtils;
@@ -66,6 +67,10 @@ public class ClientChannel {
             }
             responseMap.remove(commandId);
         }
+    }
+
+    public void sendMessage(IMessage message){
+        channel.writeAndFlush(message);
     }
 
 

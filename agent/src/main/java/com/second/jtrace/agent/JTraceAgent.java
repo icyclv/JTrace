@@ -14,6 +14,9 @@ public class JTraceAgent {
     private static final String JTRACE_CLIENT = "com.second.jtrace.core.client.JTraceClient";
     private static volatile ClassLoader jtraceClassLoader;
 
+    public static void resetClassLoader() {
+        jtraceClassLoader = null;
+    }
     public static void premain(String args, Instrumentation inst) {
         attach(args, inst);
     }

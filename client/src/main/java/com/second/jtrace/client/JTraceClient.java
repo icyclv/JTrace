@@ -3,13 +3,14 @@ package com.second.jtrace.client;
 
 
 
-import com.second.jtrace.common.SystemInfoUtil;
 import com.second.jtrace.core.client.IClient;
 import com.second.jtrace.core.command.CommandTask;
 import com.second.jtrace.core.command.ICommand;
 import com.second.jtrace.core.enhance.EnhanceManager;
+import com.second.jtrace.core.enhance.EnhancerAffect;
 import com.second.jtrace.core.response.IAsyncResponse;
 import com.second.jtrace.core.response.IResponse;
+import com.second.jtrace.spy.SpyAPI;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -17,22 +18,27 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.lang.instrument.Instrumentation;
+import java.lang.instrument.UnmodifiableClassException;
+import java.lang.reflect.Method;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.jar.JarFile;
 
 public class JTraceClient implements IClient {
 
         private static final Logger logger = LoggerFactory.getLogger(JTraceClient.class);
 
         private String clientId;
-        private String clientName;
-        private String serverHost;
-        private int serverPort;
-        private Instrumentation instrumentation;
+        private final String clientName;
+        private final String serverHost;
+        private final int serverPort;
+        private final Instrumentation instrumentation;
 
         private ScheduledExecutorService executorService;
 
+        private Thread shutdown;
 
         private EventLoopGroup group;
         private Channel channel;
@@ -42,7 +48,7 @@ public class JTraceClient implements IClient {
             this.clientName = clientName;
             this.serverHost = serverHost;
             this.serverPort = serverPort;
-//            this.clientId = "JTraceClient-"+ SystemInfoUtil.JVM_NAME + "-" + System.currentTimeMillis();
+            initSpy();
             // 初始化 Netty 客户端
             executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
                 private AtomicInteger seq = new AtomicInteger(1);
@@ -57,6 +63,7 @@ public class JTraceClient implements IClient {
             EnhanceManager.init(instrumentation);
 
             startNettyClient();
+
 
         }
 
@@ -87,6 +94,29 @@ public class JTraceClient implements IClient {
             return executorService.submit(task);
         }
 
+    private void initSpy() {
+
+        ClassLoader parent = ClassLoader.getSystemClassLoader().getParent();
+        Class<?> spyClass = null;
+        if (parent != null) {
+            try {
+                spyClass =parent.loadClass("com.second.jtrace.spy.SpyAPI");
+            } catch (Throwable e) {
+                // ignore
+            }
+        }
+        if(spyClass == null){
+            try {
+                //TODO: need dynamic path
+                File jarFlie = new File("E:\\codespace\\java\\JTrace\\spy\\target\\jtrace-spy.jar");
+                instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(jarFlie));
+                System.out.println(1);
+            } catch (Throwable e) {
+                throw new IllegalStateException("Failed to load jtrace-spy.jar", e);
+            }
+        }
+
+    }
 
     @Override
     public Instrumentation getInstrumentation() {
@@ -119,30 +149,60 @@ public class JTraceClient implements IClient {
             } else {
                 logger.warn("Channel is not active. Failed to send response: {}", response.getCommandId());
             }
-        }
+    }
 
-        public void close() {
-            if (channel != null) {
-                channel.close();
-            }
-            channel = null;
-            if (group != null) {
-                shutdownWorkGroup();
-            }
+
+
+    private void shutdownWorkGroup() {
+        if (group != null) {
+            group.shutdownGracefully(200, 200, TimeUnit.MILLISECONDS);
             group = null;
-            if(executorService != null) {
-                executorService.shutdown();
-            }
-            executorService = null;
-            logger.info("JTraceClient closed");
         }
+    }
 
-        private void shutdownWorkGroup() {
-            if (group != null) {
-                group.shutdownGracefully(200, 200, TimeUnit.MILLISECONDS);
-                group = null;
-            }
+    public void destroy() {
+
+        if (channel != null) {
+            channel.close();
         }
+        channel = null;
+        if (group != null) {
+            shutdownWorkGroup();
+        }
+        group = null;
+        if(executorService != null) {
+            executorService.shutdownNow();
+        }
+        executorService = null;
+
+        EnhanceManager.destroy(instrumentation);
+        cleanUpSpyReference();
+        logger.info("JTraceClient closed");
+    }
+
+    @Override
+    public EnhancerAffect reset() throws UnmodifiableClassException {
+            return EnhanceManager.reset(instrumentation);
+    }
+
+
+
+    private void cleanUpSpyReference() {
+        try {
+            SpyAPI.setNopSpy();
+            SpyAPI.destroy();
+        } catch (Throwable e) {
+            // ignore
+        }
+        try {
+            Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass("com.second.jtrace.agent.JTraceAgent");
+            Method method = clazz.getDeclaredMethod("resetClassLoader");
+            method.invoke(null);
+        } catch (Throwable e) {
+            // ignore
+        }
+    }
+
 
 
 

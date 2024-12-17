@@ -10,6 +10,9 @@
     </parent>
 
     <artifactId>jtrace-spy</artifactId>
+    <build>
+        <finalName>jtrace-spy</finalName>
+    </build>
 
 
 </project>

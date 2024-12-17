@@ -63,7 +63,7 @@ public class WsServerEndpoint {
     /**
      * 发送消息
      */
-    public static void send(JTraceServer eyeServer, IAsyncResponse response) {
+    public static void send(JTraceServer server, IAsyncResponse response) {
         try {
             if (response != null && sessions.containsKey(response.getSessionId())) {
                 synchronized (response.getSessionId().intern()) {
@@ -73,7 +73,7 @@ public class WsServerEndpoint {
                 logger.warn("session 不存在：" + response.getSessionId());
                 ResetCommand resetCommand = new ResetCommand();
                 resetCommand.setSessionId(response.getSessionId());
-                CommandUtil.dealCommand(eyeServer, response.getClientId(), resetCommand);
+                CommandUtil.dealCommand(server, response.getClientId(), resetCommand);
             }
         } catch (Exception ex) {
             logger.error("发送失败：" + ex.getMessage(), ex);

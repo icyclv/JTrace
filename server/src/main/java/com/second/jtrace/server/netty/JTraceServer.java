@@ -4,6 +4,7 @@ package com.second.jtrace.server.netty;
 import com.second.jtrace.core.command.ICommand;
 import com.second.jtrace.core.command.client.response.ClientInfoResponse;
 import com.second.jtrace.core.command.client.vo.ClientInfoVO;
+import com.second.jtrace.core.protocol.IMessage;
 import com.second.jtrace.core.response.BaseResponse;
 import com.second.jtrace.core.response.IAsyncResponse;
 import com.second.jtrace.core.response.IResponse;
@@ -96,6 +97,15 @@ public class JTraceServer {
             return clientChannel.sendCommand(command);
         }
         return BaseResponse.fail("clientId 不存在：" + clientId, command.getResponseClass());
+    }
+
+    public BaseResponse sendMessage(String clientId, IMessage message) {
+        ClientChannel clientChannel = clientChannels.get(clientId);
+        if (clientChannel != null) {
+            clientChannel.sendMessage(message);
+            return (BaseResponse) BaseResponse.ok("消息发送成功", BaseResponse.class);
+        }
+        return (BaseResponse) BaseResponse.fail("clientId 不存在：" + clientId, BaseResponse.class);
     }
 
     /**

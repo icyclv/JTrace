@@ -1,4 +1,4 @@
-package spy;
+package com.second.jtrace.spy;
 
 
 public class SpyAPI {

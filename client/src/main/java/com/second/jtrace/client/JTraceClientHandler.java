@@ -3,6 +3,7 @@ package com.second.jtrace.client;
 import com.second.jtrace.common.JTraceConstants;
 import com.second.jtrace.core.command.CommandTask;
 import com.second.jtrace.core.command.ICommand;
+import com.second.jtrace.core.command.shutdown.ShutdownMessage;
 import com.second.jtrace.core.protocol.IMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -43,6 +44,12 @@ public class JTraceClientHandler extends SimpleChannelInboundHandler<IMessage> {
                 } catch (TimeoutException e) {
                     logger.error("Command {} execution timed out", command.getCommandId());
                 }
+            }else if(message instanceof ShutdownMessage){
+                logger.info("Shutdown command received, shutting down client");
+                ((ShutdownMessage) message).execute(client);
+
+
+
             }
         } catch (Exception e) {
             logger.error("Error processing message: {}", e.getMessage(), e);
@@ -55,7 +62,7 @@ public class JTraceClientHandler extends SimpleChannelInboundHandler<IMessage> {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         logger.error("Exception in Netty Client: {}", cause.getMessage(), cause);
         ctx.close();
-        client.close();
+        client.destroy();
 
     }
 
