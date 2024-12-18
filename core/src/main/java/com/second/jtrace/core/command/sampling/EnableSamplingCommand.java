@@ -4,7 +4,10 @@ import com.second.jtrace.core.client.IClient;
 import com.second.jtrace.core.command.AbstractCommand;
 import com.second.jtrace.core.command.sampling.response.SamplingResponse;
 import com.second.jtrace.core.response.IResponse;
+import com.second.jtrace.core.sampling.profiler.IOProfiler;
+import lombok.Data;
 
+@Data
 public class EnableSamplingCommand extends AbstractCommand {
     String profilerName;
     Integer samplingInterval;
@@ -12,6 +15,12 @@ public class EnableSamplingCommand extends AbstractCommand {
 
     @Override
     public IResponse executeForResponse(IClient client) {
+        if(profilerName == null) {
+            return SamplingResponse.fail("profilerName cannot be null", getResponseClass());
+        }
+        if(profilerName.equals("IO") && IOProfiler.available==false) {
+            return SamplingResponse.fail("IO profiler is only available on Linux platform", getResponseClass());
+        }
         if(reportInterval == null) {
             return SamplingResponse.fail("reportInterval cannot be null", getResponseClass());
         }

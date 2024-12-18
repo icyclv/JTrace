@@ -7,6 +7,9 @@
       <el-container>
         <el-main style="background: #f8f8f9;padding: 10px;margin-top: 3px">
           <el-tabs class="tabs" v-model="tabName" style="height:calc(100vh - 100px)" tab-position="left">
+            <el-tab-pane label="采样管理" name="sampling">
+              <SamplingPanel :client-id="clientInfo.clientId"></SamplingPanel>
+            </el-tab-pane>
             <el-tab-pane label="JVM信息" name="jvm">
               <JvmPanel :client-id="clientInfo.clientId"></JvmPanel>
             </el-tab-pane>
@@ -136,6 +139,7 @@ import GroupLabelValue from "@/components/common/GroupLabelValue";
 import LoggerDetail from "@/components/logger/LoggerDetail";
 import Enhance from "@/components/enhance/Enhance";
 import MethodCall from "@/components/method/MethodCall";
+import SamplingPanel from "@/components/sampling/SamplingPanel";
 
 export default {
   name: 'ClientDetail',
@@ -154,7 +158,8 @@ export default {
     SysEnvPanel,
     SysPropPanel,
     SpringPanel,
-    MethodCall
+    MethodCall,
+    SamplingPanel
   },
 
   data() {

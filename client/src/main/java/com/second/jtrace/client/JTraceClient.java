@@ -305,6 +305,7 @@ public class JTraceClient implements IClient {
                ScheduledFuture<?> ioProfilerFuture = samplingService.scheduleAtFixedRate(ioProfiler::profile, 0, ioProfiler.getIntervalMillis(), TimeUnit.MILLISECONDS);
                 profilers.put("IO", ioProfiler);
                  profilerScheduler.put("IO", ioProfilerFuture);
+                 break;
            default:
                logger.warn("Unknown profiler: {}", profilerName);
                return false;

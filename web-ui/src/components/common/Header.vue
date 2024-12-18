@@ -13,14 +13,13 @@
       <div class="client-info" style="position: absolute; left: 50%; transform: translateX(-50%); ">
         <el-row v-if="clientName.length>0">
           <el-col :span="12">
-            <el-tag type="primary" :title="clientName">{{"客户端："+ (clientName.length > 30 ? clientName.substring(0,20) + '...' : clientName) }}</el-tag>
-          </el-col>
-          <el-col :span="12">
-            <el-tag type="primary">{{"地址："+ (clientHost.length > 30 ? clientHost.substring(0,20) + '...' : clientHost) }}</el-tag>
+            <el-tag type="primary" :title="clientName" style="width: 200px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{ "客户端：" + clientName }}</el-tag>
           </el-col>
         </el-row>
         <el-row v-if="clientHost.length>0">
-         
+          <el-col :span="12">
+            <el-tag type="primary" style="width: 200px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{ "地址：" + clientHost }}</el-tag>
+          </el-col>
         </el-row>
       </div>
      

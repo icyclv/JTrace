@@ -2,6 +2,7 @@ package com.second.jtrace.core.sampling.profiler;
 
 
 import com.second.jtrace.common.JTraceConstants;
+import com.second.jtrace.common.OSUtils;
 import com.second.jtrace.core.sampling.Reporter;
 import com.second.jtrace.core.util.ProcFileUtils;
 
@@ -13,7 +14,10 @@ public class IOProfiler  implements Profiler {
     public final static String PROFILER_NAME = "IO";
 
     private long intervalMillis = JTraceConstants.DEFAULT_METRIC_INTERVAL;
-
+    public static boolean available;
+    static {
+        available = OSUtils.isLinux();
+    }
     private Reporter reporter;
     public IOProfiler(Reporter reporter) {
       setReporter(reporter);
@@ -35,6 +39,9 @@ public class IOProfiler  implements Profiler {
 
     @Override
     public synchronized void profile() {
+        if (!available) {
+            return;
+        }
         // See http://man7.org/linux/man-pages/man5/proc.5.html for details about /proc/[pid]/io
         Map<String, String> procMap = ProcFileUtils.getProcIO();
         Long rchar = ProcFileUtils.getBytesValue(procMap, "rchar");

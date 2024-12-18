@@ -9,6 +9,7 @@ import com.second.jtrace.core.response.BaseResponse;
 import com.second.jtrace.core.response.IAsyncResponse;
 import com.second.jtrace.core.response.IResponse;
 import com.second.jtrace.core.sampling.bean.SamplingMessage;
+import com.second.jtrace.server.dao.InfluxDBDao;
 import com.second.jtrace.server.websocket.WsServerEndpoint;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -41,8 +42,11 @@ public class JTraceServer {
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
 
-    public JTraceServer(int port) {
+    private final InfluxDBDao influxDBDao;
+
+    public JTraceServer(int port, InfluxDBDao influxDBDao) {
         this.port = port;
+        this.influxDBDao = influxDBDao;
     }
 
     /**
@@ -180,6 +184,6 @@ public class JTraceServer {
     }
 
     public void handleSamplingMessage(SamplingMessage message, Channel channel) {
-
+        this.influxDBDao.writeSampling(message);
     }
 }

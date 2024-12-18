@@ -8,3 +8,9 @@ jtrace:
 logging:
   level:
     root: INFO
+influxdb:
+  enabled: true
+  url: http://192.168.31.99:8086
+  username: yachen
+  password: chang2001
+  database: jtrace
