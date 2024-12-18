@@ -15,7 +15,7 @@ public class IOProfiler  implements Profiler {
     private long intervalMillis = JTraceConstants.DEFAULT_METRIC_INTERVAL;
 
     private Reporter reporter;
-    IOProfiler(Reporter reporter) {
+    public IOProfiler(Reporter reporter) {
       setReporter(reporter);
 
     }

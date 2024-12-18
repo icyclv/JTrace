@@ -1,5 +1,10 @@
 package com.second.jtrace.core.protocol;
 
+import com.second.jtrace.core.command.sampling.DisableSamplingCommand;
+import com.second.jtrace.core.command.sampling.EnableSamplingCommand;
+import com.second.jtrace.core.command.sampling.SamplingInfoCommand;
+import com.second.jtrace.core.command.sampling.response.SamplingInfoResponse;
+import com.second.jtrace.core.command.sampling.response.SamplingResponse;
 import com.second.jtrace.core.command.shutdown.ShutdownMessage;
 import com.second.jtrace.core.command.shutdown.ShutdownResponse;
 import com.second.jtrace.core.command.clazz.ClassCommand;
@@ -38,7 +43,6 @@ import java.util.Map;
 public class MessageTypeMapper {
     private static final Map<Integer,Class<? extends IMessage>> typeMapper = new HashMap<>();
 
-    //emnu 枚举各种response
     public enum TypeList{
         BaseResponse,
         HeapDumpCommand,
@@ -87,7 +91,13 @@ public class MessageTypeMapper {
         VMToolResponse,
         ShutdownMessage,
         SamplingMessage,
+        DisableSamplingCommand,
+        SamplingInfoCommand,
+        EnableSamplingCommand,
+        SamplingInfoResponse,
+        SamplingResponse,
         PingMessage;
+
 
 
         public static int getOrdinalByClassName(Object obj) {
@@ -154,7 +164,13 @@ public class MessageTypeMapper {
 
         typeMapper.put(TypeList.ShutdownMessage.ordinal(), ShutdownMessage.class);
         typeMapper.put(TypeList.SamplingMessage.ordinal(), SamplingMessage.class);
-        
+
+        typeMapper.put(TypeList.DisableSamplingCommand.ordinal(), DisableSamplingCommand.class);
+        typeMapper.put(TypeList.SamplingInfoCommand.ordinal(), SamplingInfoCommand.class);
+        typeMapper.put(TypeList.EnableSamplingCommand.ordinal(), EnableSamplingCommand.class);
+        typeMapper.put(TypeList.SamplingInfoResponse.ordinal(), SamplingInfoResponse.class);
+        typeMapper.put(TypeList.SamplingResponse.ordinal(), SamplingResponse.class);
+
 
     }
 

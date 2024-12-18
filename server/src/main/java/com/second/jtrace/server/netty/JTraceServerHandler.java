@@ -4,6 +4,7 @@ import com.second.jtrace.core.command.client.ClientInfoCommand;
 import com.second.jtrace.core.protocol.IMessage;
 import com.second.jtrace.core.protocol.PingMessage;
 import com.second.jtrace.core.response.IResponse;
+import com.second.jtrace.core.sampling.bean.SamplingMessage;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -60,7 +61,10 @@ public class JTraceServerHandler extends SimpleChannelInboundHandler<IMessage> {
 
         server.handleResponse((IResponse) message, ctx.channel());
 
-        }else  if(message instanceof PingMessage){
+        }else if(message instanceof SamplingMessage) {
+            logger.debug("Received sampling message from {}", ctx.channel().remoteAddress());
+            server.handleSamplingMessage((SamplingMessage) message, ctx.channel());
+        } else if(message instanceof PingMessage){
             logger.debug("Received ping message from {}", ctx.channel().remoteAddress());
         }else {
             logger.error("Unknown message type: {}", message.getClass().getName());

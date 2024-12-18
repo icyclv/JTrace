@@ -21,7 +21,7 @@ import com.second.jtrace.core.sampling.Reporter;
 import java.util.Map;
 
 public interface Profiler {
-    static final String PROFILER_NAME = "";
+    public static final String PROFILER_NAME = "";
     long getIntervalMillis();
 
     void setReporter(Reporter reporter);

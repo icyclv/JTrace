@@ -8,8 +8,12 @@ import com.second.jtrace.core.command.CommandTask;
 import com.second.jtrace.core.command.ICommand;
 import com.second.jtrace.core.enhance.EnhanceManager;
 import com.second.jtrace.core.enhance.EnhancerAffect;
+import com.second.jtrace.core.protocol.IMessage;
 import com.second.jtrace.core.response.IAsyncResponse;
 import com.second.jtrace.core.response.IResponse;
+import com.second.jtrace.core.sampling.Reporter;
+import com.second.jtrace.core.sampling.bean.StacktraceMetricBuffer;
+import com.second.jtrace.core.sampling.profiler.*;
 import com.second.jtrace.spy.SpyAPI;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -40,6 +44,10 @@ public class JTraceClient implements IClient {
 
         private Thread shutdown;
 
+        private ScheduledExecutorService samplingService;
+        private Reporter reporter;
+        private ConcurrentHashMap<String, ScheduledFuture> profilerScheduler = new ConcurrentHashMap<>();
+        private ConcurrentHashMap<String, Profiler> profilers = new ConcurrentHashMap<>();
         private EventLoopGroup group;
         private Channel channel;
         private EnhanceManager enhanceManager;
@@ -60,6 +68,19 @@ public class JTraceClient implements IClient {
                     return t;
                 }
             });
+
+            samplingService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
+                private AtomicInteger seq = new AtomicInteger(1);
+
+                @Override
+                public Thread newThread(Runnable r) {
+                    final Thread t = new Thread(r, "jtrace-sampling"+seq.getAndIncrement());
+                    t.setDaemon(true);
+                    return t;
+                }
+            });
+            reporter = new Reporter(this);
+
             EnhanceManager.init(instrumentation);
 
             startNettyClient();
@@ -138,6 +159,7 @@ public class JTraceClient implements IClient {
         return clientName;
     }
 
+    @Override
     public void write(ICommand command, IResponse response) {
             response.setClientId(clientId);
             response.setCommandId(command.getCommandId());
@@ -149,6 +171,16 @@ public class JTraceClient implements IClient {
             } else {
                 logger.warn("Channel is not active. Failed to send response: {}", response.getCommandId());
             }
+    }
+    @Override
+    public void write(IMessage message) {
+
+
+        if (channel != null && channel.isActive()) {
+            channel.writeAndFlush(message);
+        } else {
+            logger.warn("Channel is not active. Failed to send message: {}", message);
+        }
     }
 
 
@@ -175,10 +207,128 @@ public class JTraceClient implements IClient {
         }
         executorService = null;
 
+        if(samplingService != null) {
+            samplingService.shutdownNow();
+        }
+
         EnhanceManager.destroy(instrumentation);
         cleanUpSpyReference();
         logger.info("JTraceClient closed");
     }
+
+    @Override
+    public synchronized boolean enableSampling(String profilerName, int sampleInterval, int reportInterval) {
+       switch (profilerName){
+           case "Stacktrace":
+               if(profilerScheduler.containsKey("StacktraceReporter") || profilerScheduler.containsKey("StacktraceCollector")){
+                   // 更新采样间隔
+                     if(profilerScheduler.containsKey("StacktraceReporter")){
+                          ScheduledFuture<?> stacktraceReporterFuture = profilerScheduler.get("StacktraceReporter");
+                          StacktraceReporterProfiler stacktraceReporterProfiler = (StacktraceReporterProfiler) profilers.get("StacktraceReporter");
+                          stacktraceReporterProfiler.setIntervalMillis(reportInterval);
+                          stacktraceReporterFuture.cancel(false);
+                          stacktraceReporterFuture = samplingService.scheduleAtFixedRate(stacktraceReporterProfiler::profile, 0, stacktraceReporterProfiler.getIntervalMillis(), TimeUnit.MILLISECONDS);
+                          profilerScheduler.put("StacktraceReporter", stacktraceReporterFuture);
+                     }
+                     if(profilerScheduler.containsKey("StacktraceCollector")){
+                         ScheduledFuture<?> stacktraceCollectorFuture = profilerScheduler.get("StacktraceCollector");
+                         StacktraceCollectorProfiler stacktraceCollectorProfiler = (StacktraceCollectorProfiler) profilers.get("StacktraceCollector");
+                         stacktraceCollectorProfiler.setIntervalMillis(sampleInterval);
+                         stacktraceCollectorFuture.cancel(false);
+                         stacktraceCollectorFuture = samplingService.scheduleAtFixedRate(stacktraceCollectorProfiler::profile, 0, stacktraceCollectorProfiler.getIntervalMillis(), TimeUnit.MILLISECONDS);
+                         profilerScheduler.put("StacktraceCollector", stacktraceCollectorFuture);
+                     }
+                     break;
+
+               }
+               StacktraceMetricBuffer stacktraceMetricBuffer = new StacktraceMetricBuffer();
+
+               StacktraceCollectorProfiler stacktraceCollectorProfiler = new StacktraceCollectorProfiler(stacktraceMetricBuffer, "jtrace");
+               stacktraceCollectorProfiler.setIntervalMillis(sampleInterval);
+
+                StacktraceReporterProfiler stacktraceReporterProfiler = new StacktraceReporterProfiler(stacktraceMetricBuffer, reporter);
+                stacktraceReporterProfiler.setIntervalMillis(reportInterval);
+               ScheduledFuture<?> stacktraceCollectorFuture = samplingService.scheduleAtFixedRate(stacktraceCollectorProfiler::profile, 0, stacktraceCollectorProfiler.getIntervalMillis(), TimeUnit.MILLISECONDS);
+
+               ScheduledFuture<?> stacktraceReportFuture = samplingService.scheduleAtFixedRate(stacktraceReporterProfiler::profile, 0, stacktraceReporterProfiler.getIntervalMillis(), TimeUnit.MILLISECONDS);
+               profilerScheduler.put("StacktraceReporter", stacktraceReportFuture);
+               profilerScheduler.put("StacktraceCollector", stacktraceCollectorFuture);
+                profilers.put("StacktraceReporter", stacktraceReporterProfiler);
+                profilers.put("StacktraceCollector", stacktraceCollectorProfiler);
+               break;
+           case "ThreadInfo":
+               if(profilers.containsKey("ThreadInfo")){
+                   ScheduledFuture<?> threadInfoFuture = profilerScheduler.get("ThreadInfo");
+                     ThreadInfoProfiler threadInfoProfiler = (ThreadInfoProfiler) profilers.get("ThreadInfo");
+                        threadInfoProfiler.setIntervalMillis(reportInterval);
+                        threadInfoFuture.cancel(false);
+                        threadInfoFuture = samplingService.scheduleAtFixedRate(threadInfoProfiler::profile, 0, threadInfoProfiler.getIntervalMillis(), TimeUnit.MILLISECONDS);
+                        profilerScheduler.put("ThreadInfo", threadInfoFuture);
+                     break;
+               }
+               ThreadInfoProfiler threadInfoProfiler = new ThreadInfoProfiler(reporter);
+                threadInfoProfiler.setIntervalMillis(reportInterval);
+               ScheduledFuture<?> future = samplingService.scheduleAtFixedRate(threadInfoProfiler::profile, 0, threadInfoProfiler.getIntervalMillis(), TimeUnit.MILLISECONDS);
+               profilers.put("ThreadInfo", threadInfoProfiler);
+                profilerScheduler.put("ThreadInfo", future);
+
+               break;
+           case "CpuAndMemory":
+                if(profilers.containsKey("CpuAndMemory")){
+                    ScheduledFuture<?> cpuAndMemoryFuture = profilerScheduler.get("CpuAndMemory");
+                    CpuAndMemoryProfiler cpuAndMemoryProfiler = (CpuAndMemoryProfiler) profilers.get("CpuAndMemory");
+                    cpuAndMemoryProfiler.setIntervalMillis(reportInterval);
+                    cpuAndMemoryFuture.cancel(false);
+                    cpuAndMemoryFuture = samplingService.scheduleAtFixedRate(cpuAndMemoryProfiler::profile, 0, cpuAndMemoryProfiler.getIntervalMillis(), TimeUnit.MILLISECONDS);
+                    profilerScheduler.put("CpuAndMemory", cpuAndMemoryFuture);
+                    break;
+
+                }
+               CpuAndMemoryProfiler cpuAndMemoryProfiler = new CpuAndMemoryProfiler(reporter);
+                cpuAndMemoryProfiler.setIntervalMillis(reportInterval);
+               ScheduledFuture<?> cpuAndMemoryProfilerFuture = samplingService.scheduleAtFixedRate(cpuAndMemoryProfiler::profile, 0, cpuAndMemoryProfiler.getIntervalMillis(), TimeUnit.MILLISECONDS);
+               profilers.put("CpuAndMemory", cpuAndMemoryProfiler);
+                profilerScheduler.put("CpuAndMemory", cpuAndMemoryProfilerFuture);
+               break;
+           case "IO":
+               if(profilers.containsKey("IO")){
+                   ScheduledFuture<?> ioFuture = profilerScheduler.get("IO");
+                     IOProfiler ioProfiler = (IOProfiler) profilers.get("IO");
+                        ioProfiler.setIntervalMillis(reportInterval);
+                        ioFuture.cancel(false);
+                        ioFuture = samplingService.scheduleAtFixedRate(ioProfiler::profile, 0, ioProfiler.getIntervalMillis(), TimeUnit.MILLISECONDS);
+                        profilerScheduler.put("IO", ioFuture);
+                        break;
+               }
+                IOProfiler ioProfiler = new IOProfiler(reporter);
+                ioProfiler.setIntervalMillis(reportInterval);
+               ScheduledFuture<?> ioProfilerFuture = samplingService.scheduleAtFixedRate(ioProfiler::profile, 0, ioProfiler.getIntervalMillis(), TimeUnit.MILLISECONDS);
+                profilers.put("IO", ioProfiler);
+                 profilerScheduler.put("IO", ioProfilerFuture);
+           default:
+               logger.warn("Unknown profiler: {}", profilerName);
+               return false;
+       }
+       return true;
+    }
+
+    @Override
+    public boolean disableSampling(String profilerName) {
+        if(profilerScheduler.containsKey(profilerName)){
+            ScheduledFuture<?> future = profilerScheduler.get(profilerName);
+            future.cancel(false);
+            profilerScheduler.remove(profilerName);
+            profilers.remove(profilerName);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public ConcurrentHashMap<String, Profiler> getProfilers() {
+        return this.profilers;
+    }
+
 
     @Override
     public EnhancerAffect reset() throws UnmodifiableClassException {

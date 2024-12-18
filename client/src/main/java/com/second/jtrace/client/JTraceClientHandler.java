@@ -24,7 +24,7 @@ public class JTraceClientHandler extends SimpleChannelInboundHandler<IMessage> {
     private JTraceClient client;
 
     public JTraceClientHandler(JTraceClient client) {
-        this.client = client;
+       this.client = client;
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.second.jtrace.core.protocol.IMessage;
 import com.second.jtrace.core.response.BaseResponse;
 import com.second.jtrace.core.response.IAsyncResponse;
 import com.second.jtrace.core.response.IResponse;
+import com.second.jtrace.core.sampling.bean.SamplingMessage;
 import com.second.jtrace.server.websocket.WsServerEndpoint;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -178,4 +179,7 @@ public class JTraceServer {
 
     }
 
+    public void handleSamplingMessage(SamplingMessage message, Channel channel) {
+
+    }
 }
