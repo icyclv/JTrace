@@ -2,7 +2,7 @@ package com.second.jtrace.core.spy;
 
 import com.alibaba.bytekit.asm.binding.Binding;
 import com.alibaba.bytekit.asm.interceptor.annotation.*;
-import spy.SpyAPI;
+import com.second.jtrace.spy.SpyAPI;
 
 
 /**

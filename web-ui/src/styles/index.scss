@@ -1,4 +1,4 @@
-@import './element-ui.scss';
+@use './element-ui' as *;
 
 html {
   height: 100%;

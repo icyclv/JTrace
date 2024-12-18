@@ -11,7 +11,7 @@ import com.second.jtrace.core.response.IAsyncResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TraceEnhanceListener extends TimesAdviceListener implements InvokeListener {
+public class TraceEnhanceListener extends TimesAdviceListener implements InvokeTraceable {
     private static final Logger logger = LoggerFactory.getLogger(TraceEnhanceListener.class);
 
     public TraceEnhanceListener(IClient client, TraceCommand command) {

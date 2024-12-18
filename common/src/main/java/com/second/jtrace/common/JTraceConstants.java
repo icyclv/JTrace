@@ -22,6 +22,8 @@ public class JTraceConstants {
     public static final String ACCESS_POINT_AFTER = "after";
     public static final String ACCESS_POINT_EXCEPTION = "exception";
     public static final String OUTPUT_DIR;
+    public static final long DEFAULT_METRIC_INTERVAL = 60000;
+    public static final int MAX_STRING_LENGTH = 800000;
 
     static{
         JTRACE_HOME = getJtraceHome();

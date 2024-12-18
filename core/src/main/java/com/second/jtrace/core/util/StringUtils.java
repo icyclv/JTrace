@@ -32,6 +32,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public abstract class StringUtils {
     private static final Logger logger = LoggerFactory.getLogger(StringUtils.class);
     private static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    private static final int KB_SIZE = 1024;
+    private static final int MB_SIZE = 1024 * 1024;
+    private static final int GB_SIZE = 1024 * 1024 * 1024;
 
     /**
      * 获取异常的原因描述
@@ -53,6 +56,55 @@ public abstract class StringUtils {
             return UUID.randomUUID().toString();
         }
     }
+
+    public static Long getBytesValueOrNull(String str) {
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+
+        str = str.toLowerCase();
+        int scale = 1;
+
+        try {
+            if (str.endsWith("kb")) {
+                str = str.substring(0, str.length() - 2).trim();
+                scale = KB_SIZE;
+            } if (str.endsWith("k")) {
+                str = str.substring(0, str.length() - 1).trim();
+                scale = KB_SIZE;
+            } else if (str.endsWith("mb")) {
+                str = str.substring(0, str.length() - 2).trim();
+                scale = MB_SIZE;
+            } else if (str.endsWith("m")) {
+                str = str.substring(0, str.length() - 1).trim();
+                scale = MB_SIZE;
+            } else if (str.endsWith("gb")) {
+                str = str.substring(0, str.length() - 2).trim();
+                scale = GB_SIZE;
+            } else if (str.endsWith("g")) {
+                str = str.substring(0, str.length() - 1).trim();
+                scale = GB_SIZE;
+            } else if (str.endsWith("bytes")) {
+                str = str.substring(0, str.length() - "bytes".length()).trim();
+                scale = 1;
+            }
+
+            str = str.replace(",", "");
+
+
+            try {
+                double doubleValue = Double.parseDouble(str);
+                return (long)(doubleValue * scale);
+            } catch (NumberFormatException e) {
+               return null;
+            }
+
+        } catch (Throwable ex) {
+            return null;
+        }
+    }
+
+
 
 
     /**

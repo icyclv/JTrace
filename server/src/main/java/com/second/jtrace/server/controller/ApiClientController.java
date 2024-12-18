@@ -1,8 +1,12 @@
 package com.second.jtrace.server.controller;
 
+import com.second.jtrace.core.command.shutdown.ShutdownMessage;
 import com.second.jtrace.core.command.client.ClientInfoCommand;
 import com.second.jtrace.core.command.client.response.ClientInfoResponse;
 import com.second.jtrace.core.command.client.vo.ClientInfoVO;
+import com.second.jtrace.core.command.shutdown.ShutdownResponse;
+import com.second.jtrace.core.response.BaseResponse;
+import com.second.jtrace.core.response.IResponse;
 import com.second.jtrace.server.dto.Result;
 import com.second.jtrace.server.netty.ClientChannel;
 import com.second.jtrace.server.netty.JTraceServer;
@@ -46,6 +50,20 @@ public class ApiClientController {
     public Result info(@RequestParam String clientId) {
         ClientInfoCommand command = new ClientInfoCommand();
         ClientInfoResponse response = CommandUtil.dealCommand(server, clientId, command);
+        if(response.getStatus()== BaseResponse.STATUS_FAIL){
+            return Result.fail(response.getMsg());
+        }
         return Result.ok(response.getClientInfo());
+    }
+
+    @RequestMapping("shutdown")
+    public Result shutdown(@RequestParam String clientId) {
+        ShutdownMessage message = new ShutdownMessage();
+        BaseResponse response = server.sendMessage(clientId, message);
+        if (response.getStatus() == BaseResponse.STATUS_FAIL) {
+            return Result.fail(response.getMsg());
+        }
+
+        return Result.ok();
     }
 }

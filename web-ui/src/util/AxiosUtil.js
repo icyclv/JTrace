@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import {getSession} from './SessionUtil';
+import {getSession,clearSession} from './SessionUtil';
 let axiosWrap = axios;
 
 // 创建axios实例
@@ -25,7 +25,25 @@ error => {
   }
 );
 
-
+axiosWrap.interceptors.response.use(
+  response => {
+    return response;
+  },
+  (error) => {
+    if (error.response) {
+      const { status } = error.response;
+      if (status === 401) {
+        // 清除可能过期的 Token
+        clearSession();
+        console.log("清除session");
+        // 跳转到登录页面
+        window.location.href = '/login';
+      }
+    }
+    // 返回 Promise 拒绝错误
+    return Promise.reject(error);
+  }
+);
 
 
 export default axiosWrap;

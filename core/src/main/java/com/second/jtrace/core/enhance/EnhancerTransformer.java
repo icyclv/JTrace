@@ -29,17 +29,14 @@ import com.second.jtrace.core.util.FileUtils;
 import org.benf.cfr.reader.bytecode.analysis.parse.utils.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spy.SpyAPI;
+import com.second.jtrace.spy.SpyAPI;
 
 import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.lang.System.arraycopy;
 
@@ -72,6 +69,8 @@ public class EnhancerTransformer implements ClassFileTransformer {
      */
     private boolean skipJDKTrace;
 
+
+    public final static Map<Class<?>/* Class */, Object> classBytesCache = new WeakHashMap<Class<?>, Object>();
 
     private static SpyImpl spyImpl = new SpyImpl();
 
@@ -182,6 +181,9 @@ public class EnhancerTransformer implements ClassFileTransformer {
                 }
 
                 byte[] enhanceClassByteArray = AsmUtils.toBytes(classNode, loader, classReader);
+
+
+                classBytesCache.put(classBeingRedefined, new Object());
 
                 // dump the class
                 File file = FileUtils.dumpClassIfNecessary(classBeingRedefined, enhanceClassByteArray);

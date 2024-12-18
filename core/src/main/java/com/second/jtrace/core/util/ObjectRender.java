@@ -19,6 +19,7 @@ public class ObjectRender {
     private final static String TAB = "    ";
     private final static Map<Byte, String> ASCII_MAP = new HashMap<Byte, String>();
 
+    // ASCII码表
     static {
         ASCII_MAP.put((byte) 0, "NUL");
         ASCII_MAP.put((byte) 1, "SOH");

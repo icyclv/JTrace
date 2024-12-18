@@ -21,5 +21,12 @@ public class BaseResponse implements IResponse {
         return GsonSerializer.fromJson(GsonSerializer.toJson(baseResponse), responseClass);
     }
 
+    public static IResponse ok(String msg, Class<? extends IResponse> responseClass) {
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setMsg(msg);
+        baseResponse.setStatus(STATUS_OK);
+        return GsonSerializer.fromJson(GsonSerializer.toJson(baseResponse), responseClass);
+    }
+
 
 }

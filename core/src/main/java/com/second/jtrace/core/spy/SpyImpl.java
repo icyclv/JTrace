@@ -8,7 +8,7 @@ import com.second.jtrace.core.listener.InvokeTraceable;
 import com.second.jtrace.core.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spy.SpyAPI;
+import com.second.jtrace.spy.SpyAPI;
 
 import java.util.List;
 

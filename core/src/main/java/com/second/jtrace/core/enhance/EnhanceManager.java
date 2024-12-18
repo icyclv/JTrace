@@ -26,6 +26,8 @@ public class EnhanceManager {
      * 跟踪类转换器列表
      */
     private static List<EnhancerTransformer> traceTransformers = new CopyOnWriteArrayList<EnhancerTransformer>();
+
+
     /**
      * 聚合转换器
      */
@@ -86,7 +88,7 @@ public class EnhanceManager {
      *
      * @param resetCommandId
      * @param sessionId
-     * @return
+     * @return 返回被移除的转换器
      */
     public static Set<EnhancerTransformer> removeTransformers(String resetCommandId, String sessionId) {
         Set<EnhancerTransformer> enhancerTransformers = new HashSet<EnhancerTransformer>();
@@ -101,7 +103,7 @@ public class EnhanceManager {
      * @param list
      * @param resetCommandId
      * @param sessionId
-     * @return
+     * @return 返回被移除的转换器
      */
     private static Set<EnhancerTransformer> removeTransformers(List<EnhancerTransformer> list
             , String resetCommandId, String sessionId) {
@@ -141,10 +143,40 @@ public class EnhanceManager {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         } finally {
-            affect.classCnt(enhanceClassSet.size());
+            for (Class<?> resetClass : enhanceClassSet) {
+                EnhancerTransformer.classBytesCache.remove(resetClass);
+                affect.classCnt(1);
+            }
         }
         return affect;
     }
+
+    /**
+     * 重置所以的Class
+     *
+     * @param inst             inst
+     * @return 增强影响范围
+     */
+    public static synchronized EnhancerAffect reset(final Instrumentation inst) throws UnmodifiableClassException {
+
+        final EnhancerAffect affect = new EnhancerAffect();
+
+        final Set<Class<?>> enhanceClassSet = new HashSet<Class<?>>(EnhancerTransformer.classBytesCache.keySet());
+
+        try {
+            enhance(inst, enhanceClassSet);
+        } finally {
+            for (Class<?> resetClass : enhanceClassSet) {
+                EnhancerTransformer.classBytesCache.remove(resetClass);
+                affect.classCnt(1);
+            }
+        }
+
+        return affect;
+    }
+
+
+
 
     private static void enhance(Instrumentation inst, Set<Class<?>> classes)
             throws UnmodifiableClassException {
@@ -154,5 +186,15 @@ public class EnhanceManager {
         if (classArray.length > 0) {
             inst.retransformClasses(classArray);
         }
+    }
+
+    public static void destroy(Instrumentation inst) {
+        watchTransformers.clear();
+        traceTransformers.clear();
+
+        if(classFileTransformer != null){
+            inst.removeTransformer(classFileTransformer);
+        }
+
     }
 }

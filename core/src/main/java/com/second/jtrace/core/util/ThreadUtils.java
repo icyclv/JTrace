@@ -4,7 +4,7 @@ package com.second.jtrace.core.util;
 import com.second.jtrace.common.JTraceConstants;
 import com.second.jtrace.core.command.enhance.model.node.ThreadNode;
 import com.second.jtrace.core.command.thread.vo.ThreadInfo;
-import spy.SpyAPI;
+import com.second.jtrace.spy.SpyAPI;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;

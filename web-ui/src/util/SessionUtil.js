@@ -23,3 +23,8 @@ export function getSession() {
   return null;
 }
 
+export function clearSession() {
+  sessionStorage.removeItem('username');
+  sessionStorage.removeItem('sessionId');
+}
+
