@@ -1,9 +1,8 @@
 package com.second.jtrace.server.configuration;
 
-import org.influxdb.BatchOptions;
-import org.influxdb.InfluxDB;
-import org.influxdb.InfluxDBFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.client.InfluxDBClientFactory;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -21,34 +20,32 @@ public class InfluxDBConfiguration {
     @Value("${influxdb.url:http://localhost:8086}")
     private String url;
 
-    @Value("${influxdb.username:defaultUser}")
-    private String username;
+    @Value("${influxdb.token}")
+    private String token;
 
-    @Value("${influxdb.password:defaultPassword}")
-    private String password;
+    @Value("${influxdb.org:test}")
+    private String org;
 
-    @Value("${influxdb.database:defaultDatabase}")
-    private String database;
+    @Value("${influxdb.bucket:test}")
+    private String bucket;
 
 
-    public String getDatabase() {
-        return database;
+    public String getOrg() {
+        return org;
     }
 
-
-
+   public String getBucket() {
+        return bucket;
+    }
 
     @Bean
     @ConditionalOnProperty(name = "influxdb.enabled", havingValue = "true")
-    public InfluxDB influxDBClient() {
+    public InfluxDBClient influxDBClient() {
         if(!enabled) {
             return null;
         }
-        InfluxDB influxDB = InfluxDBFactory.connect(url, username, password);
-       influxDB.enableBatch(BatchOptions.DEFAULTS);
-        influxDB.setLogLevel(InfluxDB.LogLevel.BASIC);
 
-        return influxDB;
+        return InfluxDBClientFactory.create(url, token.toCharArray(), org, bucket);
     }
 
 }

@@ -27,7 +27,7 @@ public class EnableSamplingCommand extends AbstractCommand {
         if("Stacktrace".equals(profilerName)   && samplingInterval == null) {
             return SamplingResponse.fail("samplingInterval cannot be null", getResponseClass());
         }
-        if(reportInterval < 100 || (samplingInterval != null && samplingInterval < 100)) {
+        if(reportInterval < 1000 || (samplingInterval != null && samplingInterval < 100)) {
             return SamplingResponse.fail("interval must be greater than 100", getResponseClass());
         }
 

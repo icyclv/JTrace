@@ -62,6 +62,7 @@ public class StacktraceReporterProfiler  implements Profiler {
 
     @Override
     public void profile() {
+        Map<String,Object> resultMap = new HashMap<>();
         if (buffer == null) {
             return;
         }
@@ -76,14 +77,13 @@ public class StacktraceReporterProfiler  implements Profiler {
 
         long endEpoch = buffer.getLastResetMillis();
 
+        resultMap.put("startEpoch", startEpoch);
+        resultMap.put("endEpoch", endEpoch);
+        List<Map<String,Object>> stacktraces = new ArrayList<>();
         for (Map.Entry<Stacktrace, AtomicLong> entry : metrics.entrySet()) {
             Map<String, Object> map = new HashMap<>();
 
-            map.put("startEpoch", startEpoch);
-            map.put("endEpoch", endEpoch);
 
-
-            
             Stacktrace stacktrace = entry.getKey();
             
             map.put("threadName", stacktrace.getThreadName());
@@ -99,8 +99,10 @@ public class StacktraceReporterProfiler  implements Profiler {
             }
             
             map.put("count", entry.getValue().get());
-
-            reporter.report(PROFILER_NAME, map);
+            stacktraces.add(map);
         }
+        resultMap.put("stacktraces", stacktraces);
+        reporter.report(PROFILER_NAME, resultMap);
+
     }
 }

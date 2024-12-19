@@ -4,7 +4,9 @@ import com.second.jtrace.core.client.IClient;
 import com.second.jtrace.core.command.AbstractCommand;
 import com.second.jtrace.core.command.sampling.response.SamplingResponse;
 import com.second.jtrace.core.response.IResponse;
+import lombok.Data;
 
+@Data
 public class DisableSamplingCommand extends AbstractCommand {
     String profilerName;
 

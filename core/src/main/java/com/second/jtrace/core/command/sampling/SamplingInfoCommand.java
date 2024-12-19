@@ -16,9 +16,10 @@ public class SamplingInfoCommand extends AbstractCommand {
     public IResponse executeForResponse(IClient client) {
         List<ProfilerInfo> profilerInfoList = new ArrayList<>();
         ConcurrentHashMap<String, Profiler> profilers = client.getProfilers();
-        for(Profiler profiler : profilers.values()) {
+        for (String key : profilers.keySet()) {
+            Profiler profiler = profilers.get(key);
             ProfilerInfo profilerInfo = new ProfilerInfo();
-            profilerInfo.setProfilerName(Profiler.PROFILER_NAME);
+            profilerInfo.setProfilerName(key);
             profilerInfo.setIntervalMillis(profiler.getIntervalMillis());
             profilerInfoList.add(profilerInfo);
         }

@@ -11,6 +11,6 @@ logging:
 influxdb:
   enabled: true
   url: http://192.168.31.99:8086
-  username: yachen
-  password: chang2001
-  database: jtrace
+  token: 1bReDqcK4WPDu08C4f0Le5qCDr2vwCYr8qziNWhjELNFaiPGRm0M4gXTQcxgt8Jz67JjIOa_5F2s8GfM_QGgTw==
+  org: test
+  bucket: test
