@@ -10,8 +10,8 @@
           <el-option key="sun.misc.Launcher$AppClassLoader" label="sun.misc.Launcher$AppClassLoader"
                      value="sun.misc.Launcher$AppClassLoader"></el-option>
         </el-select>
-        <el-button @click="showConfigInfo()" type="warning">查询配置项</el-button>
-        <el-button @click="showResourceInfo()" type="warning">查询资源文件</el-button>
+        <el-button @click="showConfigInfo()" type="primary">查询配置项</el-button>
+        <el-button @click="showResourceInfo()" type="primary">查询资源文件</el-button>
       </el-col>
     </el-row>
     <el-row style="margin-top:10px">

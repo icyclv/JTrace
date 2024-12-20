@@ -43,7 +43,7 @@ export default {
     }
   },
   created() {
-    // this.showMemoryInfos();
+    this.showMemoryInfos();
   },
   methods: {
     showMemoryInfos() {

@@ -7,6 +7,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class MonitorInfoVO extends LockInfoVO {
     private int    stackDepth;
-    private StackTraceElement stackFrame;
+    private StackTraceElementVO stackFrame;
 
 }

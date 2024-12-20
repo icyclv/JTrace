@@ -46,7 +46,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.second.jtrace.attach.AgentBootstrap</mainClass>
+                                    <mainClass>com.second.jtrace.boot.AgentBootstrap</mainClass>
                                 </manifest>
                                 <manifestEntries>
                                     <Specification-Title>${project.name}</Specification-Title>

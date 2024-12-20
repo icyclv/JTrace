@@ -44,7 +44,7 @@ export default {
     }
   },
   created() {
-    // this.showClassLoaders();
+    this.showClassLoaders();
   },
   methods: {
     showClassLoaders() {

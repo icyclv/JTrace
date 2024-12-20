@@ -48,11 +48,7 @@ public class JTraceServerHandler extends SimpleChannelInboundHandler<IMessage> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        Channel channel = ctx.channel();
-        String clientID = channel.attr(CLIENT_ID_KEY).get();
-        logger.error("Client exception: {}", clientID, cause);
-        server.removeClient(clientID);
-        ctx.close();
+        logger.error("Exception in Netty Server: {}", cause.getMessage(), cause);
     }
 
     @Override

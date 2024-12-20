@@ -35,8 +35,8 @@
                              style="overflow-y: scroll;"
                              :style="{height:dynamicHeight}"></GroupLabelValue>
           </el-tab-pane>
-          <el-tab-pane label="线程信息" name="threadInfo">
-            <GroupLabelValue :group-obj="jvmInfo.threadInfo" group-name="线程信息"
+          <el-tab-pane label="线程信息" name="threadInfoVO">
+            <GroupLabelValue :group-obj="jvmInfo.threadInfoVO" group-name="线程信息"
                              style="overflow-y: scroll;"
                              :style="{height:dynamicHeight}"></GroupLabelValue>
           </el-tab-pane>

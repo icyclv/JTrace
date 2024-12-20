@@ -47,6 +47,7 @@ public class LoggerInfoCommand extends AbstractLoggerCommand {
 
     @Override
     public IResponse executeForResponse(IClient client) {
+        try{
         LoggerInfoResponse loggerInfoResponse = new LoggerInfoResponse();
         List<LoggerInfoVO> loggerInfos = new ArrayList<>();
         initLoggerInfos(client.getInstrumentation(), loggerInfos);
@@ -54,10 +55,15 @@ public class LoggerInfoCommand extends AbstractLoggerCommand {
         if (loggerInfos.isEmpty()) {
             return createExceptionResponse("Can not find any logger info");
         }
-        return loggerInfoResponse;
+            return loggerInfoResponse;
+
+        }catch (Exception e){
+            logger.error("LoggerInfoCommand executeForResponse error, message:{}", e.getMessage(), e);
+            return createExceptionResponse("The command execution failed. If the JDK version is greater than 9, please check whether --add-opens java.base/java.lang=ALL-UNNAMED is enabled.");
+        }
     }
 
-    public void initLoggerInfos(Instrumentation instrumentation, List<LoggerInfoVO> loggerInfos) {
+    public void initLoggerInfos(Instrumentation instrumentation, List<LoggerInfoVO> loggerInfos) throws Exception {
         Map<ClassLoader, LoggerTypes> classLoaderLoggerMap = new LinkedHashMap<ClassLoader, LoggerTypes>();
         for (Class<?> clazz : instrumentation.getAllLoadedClasses()) {
             String className = clazz.getName();
@@ -97,7 +103,7 @@ public class LoggerInfoCommand extends AbstractLoggerCommand {
             }
         }
     }
-    private Map<String, Map<String, Object>> loggerInfo(ClassLoader classLoader, Class<?> helperClass) {
+    private Map<String, Map<String, Object>> loggerInfo(ClassLoader classLoader, Class<?> helperClass) throws Exception {
         Map<String, Map<String, Object>> loggers = Collections.emptyMap();
         try {
             Class<?> clazz = helperClassNameWithClassLoader(classLoader, helperClass);
@@ -105,7 +111,9 @@ public class LoggerInfoCommand extends AbstractLoggerCommand {
             loggers = (Map<String, Map<String, Object>>) getLoggersMethod.invoke(null,
                     new Object[]{name, includeNoAppender});
         } catch (Throwable e) {
-            // ignore
+            logger.error("getLoggers error, classLoader:{}, helperClass:{}, name:{}, includeNoAppender:{}",
+                    classLoader, helperClass, name, includeNoAppender, e);
+            throw new Exception(e);
         }
         return loggers;
 

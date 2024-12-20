@@ -1,6 +1,6 @@
 package com.second.jtrace.core.util;
 
-import com.second.jtrace.core.command.thread.vo.ThreadInfo;
+import com.second.jtrace.core.command.thread.vo.ThreadInfoVO;
 import sun.management.HotspotThreadMBean;
 import sun.management.ManagementFactoryHelper;
 
@@ -14,20 +14,20 @@ public class ThreadSampler {
     private static HotspotThreadMBean hotspotThreadMBean;
     private static boolean hotspotThreadMBeanEnable = true;
 
-    private Map<ThreadInfo, Long> lastCpuTimes = new HashMap<ThreadInfo, Long>();
+    private Map<ThreadInfoVO, Long> lastCpuTimes = new HashMap<ThreadInfoVO, Long>();
 
     private long lastSampleTimeNanos;
 
-    public List<ThreadInfo> sample(Collection<ThreadInfo> originThreads) {
-        List<ThreadInfo> threads = new ArrayList<ThreadInfo>();
-        for (ThreadInfo threadInfo : originThreads) {
-            threads.add(threadInfo);
+    public List<ThreadInfoVO> sample(Collection<ThreadInfoVO> originThreads) {
+        List<ThreadInfoVO> threads = new ArrayList<ThreadInfoVO>();
+        for (ThreadInfoVO threadInfoVO : originThreads) {
+            threads.add(threadInfoVO);
         }
 
         // Sample CPU
         if (lastCpuTimes.isEmpty()) {
             lastSampleTimeNanos = System.nanoTime();
-            for (ThreadInfo thread : threads) {
+            for (ThreadInfoVO thread : threads) {
                 if (thread.getId() > 0) {
                     long cpu = threadMXBean.getThreadCpuTime(thread.getId());
                     lastCpuTimes.put(thread, cpu);
@@ -40,7 +40,7 @@ public class ThreadSampler {
             if (internalThreadCpuTimes != null) {
                 for (Map.Entry<String, Long> entry : internalThreadCpuTimes.entrySet()) {
                     String key = entry.getKey();
-                    ThreadInfo thread = createThreadSampleInfoVO(key);
+                    ThreadInfoVO thread = createThreadSampleInfoVO(key);
                     thread.setTime(entry.getValue() / 1000000);
                     threads.add(thread);
                     lastCpuTimes.put(thread, entry.getValue());
@@ -48,9 +48,9 @@ public class ThreadSampler {
             }
 
             //sort by time
-            Collections.sort(threads, new Comparator<ThreadInfo>() {
+            Collections.sort(threads, new Comparator<ThreadInfoVO>() {
                 @Override
-                public int compare(ThreadInfo o1, ThreadInfo o2) {
+                public int compare(ThreadInfoVO o1, ThreadInfoVO o2) {
                     long l1 = o1.getTime();
                     long l2 = o2.getTime();
                     if (l1 < l2) {
@@ -67,8 +67,8 @@ public class ThreadSampler {
 
         // Resample
         long newSampleTimeNanos = System.nanoTime();
-        Map<ThreadInfo, Long> newCpuTimes = new HashMap<ThreadInfo, Long>(threads.size());
-        for (ThreadInfo thread : threads) {
+        Map<ThreadInfoVO, Long> newCpuTimes = new HashMap<ThreadInfoVO, Long>(threads.size());
+        for (ThreadInfoVO thread : threads) {
             if (thread.getId() > 0) {
                 long cpu = threadMXBean.getThreadCpuTime(thread.getId());
                 newCpuTimes.put(thread, cpu);
@@ -78,15 +78,15 @@ public class ThreadSampler {
         Map<String, Long> newInternalThreadCpuTimes = getInternalThreadCpuTimes();
         if (newInternalThreadCpuTimes != null) {
             for (Map.Entry<String, Long> entry : newInternalThreadCpuTimes.entrySet()) {
-                ThreadInfo ThreadInfo = createThreadSampleInfoVO(entry.getKey());
-                threads.add(ThreadInfo);
-                newCpuTimes.put(ThreadInfo, entry.getValue());
+                ThreadInfoVO ThreadInfoVO = createThreadSampleInfoVO(entry.getKey());
+                threads.add(ThreadInfoVO);
+                newCpuTimes.put(ThreadInfoVO, entry.getValue());
             }
         }
 
         // Compute delta time
-        final Map<ThreadInfo, Long> deltas = new HashMap<ThreadInfo, Long>(threads.size());
-        for (ThreadInfo thread : newCpuTimes.keySet()) {
+        final Map<ThreadInfoVO, Long> deltas = new HashMap<ThreadInfoVO, Long>(threads.size());
+        for (ThreadInfoVO thread : newCpuTimes.keySet()) {
             Long t = lastCpuTimes.get(thread);
             if (t == null) {
                 t = 0L;
@@ -105,15 +105,15 @@ public class ThreadSampler {
         long sampleIntervalNanos = newSampleTimeNanos - lastSampleTimeNanos;
 
         // Compute cpu usage
-        final HashMap<ThreadInfo, Double> cpuUsages = new HashMap<ThreadInfo, Double>(threads.size());
-        for (ThreadInfo thread : threads) {
+        final HashMap<ThreadInfoVO, Double> cpuUsages = new HashMap<ThreadInfoVO, Double>(threads.size());
+        for (ThreadInfoVO thread : threads) {
             double cpu = sampleIntervalNanos == 0 ? 0 : (Math.rint(deltas.get(thread) * 10000.0 / sampleIntervalNanos) / 100.0);
             cpuUsages.put(thread, cpu);
         }
 
         // Sort by CPU time : should be a rendering hint...
-        Collections.sort(threads, new Comparator<ThreadInfo>() {
-            public int compare(ThreadInfo o1, ThreadInfo o2) {
+        Collections.sort(threads, new Comparator<ThreadInfoVO>() {
+            public int compare(ThreadInfoVO o1, ThreadInfoVO o2) {
                 long l1 = deltas.get(o1);
                 long l2 = deltas.get(o2);
                 if (l1 < l2) {
@@ -126,7 +126,7 @@ public class ThreadSampler {
             }
         });
 
-        for (ThreadInfo thread : threads) {
+        for (ThreadInfoVO thread : threads) {
             //nanos to mills
             long timeMills = newCpuTimes.get(thread) / 1000000;
             long deltaTime = deltas.get(thread) / 1000000;
@@ -157,14 +157,14 @@ public class ThreadSampler {
         return null;
     }
 
-    private ThreadInfo createThreadSampleInfoVO(String name) {
-        ThreadInfo ThreadInfo = new ThreadInfo();
-        ThreadInfo.setId(-1);
-        ThreadInfo.setName(name);
-        ThreadInfo.setPriority(-1);
-        ThreadInfo.setDaemon(true);
-        ThreadInfo.setInterrupted(false);
-        return ThreadInfo;
+    private ThreadInfoVO createThreadSampleInfoVO(String name) {
+        ThreadInfoVO ThreadInfoVO = new ThreadInfoVO();
+        ThreadInfoVO.setId(-1);
+        ThreadInfoVO.setName(name);
+        ThreadInfoVO.setPriority(-1);
+        ThreadInfoVO.setDaemon(true);
+        ThreadInfoVO.setInterrupted(false);
+        return ThreadInfoVO;
     }
 
     public void pause(long mills) {

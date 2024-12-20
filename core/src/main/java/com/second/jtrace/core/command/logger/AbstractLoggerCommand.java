@@ -81,7 +81,7 @@ public abstract class AbstractLoggerCommand extends AbstractCommand {
             }
         }
     }
-    static Class<?> helperClassNameWithClassLoader(ClassLoader classLoader, Class<?> helperClass) {
+    static Class<?> helperClassNameWithClassLoader(ClassLoader classLoader, Class<?> helperClass) throws Exception {
         String classLoaderHash = ClassLoaderUtils.classLoaderHash(classLoader);
         String className = helperClass.getName();
         // if want to debug, change to return className
@@ -97,9 +97,10 @@ public abstract class AbstractLoggerCommand extends AbstractCommand {
             } catch (Throwable e1) {
                 logger.error("loggger command try to define helper class error: " + helperClassName,
                         e1);
+                throw new Exception(e1);
             }
         }
-        return null;
+
     }
 
     public static enum LoggerType {

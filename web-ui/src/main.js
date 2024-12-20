@@ -25,13 +25,12 @@ router.beforeEach((to, from, next) => {
     return;
   }
   if (getSession()) {
-    console.log("sessionId:" + getSession())
     next();
   } else {
     if (whiteList.indexOf(to.path) !== -1) {
       next();
     } else {
-      next('/login');
+      next('/#/login');
     }
   }
 });
