@@ -36,11 +36,7 @@ public class JTraceConstants {
     public static String getJtraceHome(){
         String path="";
         String dirName = ".jtrace";
-        if(OSUtils.isWindows()){
-            path = System.getenv("LOCALAPPDATA") + File.separator +dirName;
-        }else {
-            path = System.getProperty("user.home") + File.separator +dirName;
-        }
+        path = System.getProperty("user.home") + File.separator +dirName;
         File file = new File(path);
         if(!file.exists()){
             file.mkdirs();

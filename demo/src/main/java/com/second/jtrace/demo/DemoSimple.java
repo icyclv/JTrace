@@ -11,13 +11,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author gy4j
- * 功能：
- * 日期：2022/11/16-16:56
- * 版本       开发者     描述
- * 1.0.0     gy4j     ...
- */
+
 public class DemoSimple {
     private static final Logger logger = LoggerFactory.getLogger(DemoSimple.class);
 

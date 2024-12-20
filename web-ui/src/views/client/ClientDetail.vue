@@ -166,7 +166,7 @@ export default {
     return {
       currentPath: "detail",
       clientInfo: {},
-      tabName: "jvm",
+      tabName: "sampling",
       searchClassName: "",
       searchMethodName: "",
       searchClassLoaderHash: "",

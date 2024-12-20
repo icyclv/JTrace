@@ -26,6 +26,7 @@ import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
+import java.security.CodeSource;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarFile;
@@ -39,7 +40,7 @@ public class JTraceClient implements IClient {
         private final String serverHost;
         private final int serverPort;
         private final Instrumentation instrumentation;
-
+        private final static String SPY_JAR = "jtrace-spy.jar";
         private ScheduledExecutorService executorService;
 
         private Thread shutdown;
@@ -56,7 +57,11 @@ public class JTraceClient implements IClient {
             this.clientName = clientName;
             this.serverHost = serverHost;
             this.serverPort = serverPort;
-            initSpy();
+            try{
+                initSpy();
+            }catch (Exception ignored){
+
+            }
             // 初始化 Netty 客户端
             executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
                 private AtomicInteger seq = new AtomicInteger(1);
@@ -84,6 +89,15 @@ public class JTraceClient implements IClient {
             EnhanceManager.init(instrumentation);
 
             startNettyClient();
+
+            shutdown = new Thread("as-shutdown-hooker") {
+
+                @Override
+                public void run() {
+                    JTraceClient.this.destroy();
+                }
+            };
+
 
 
         }
@@ -128,10 +142,14 @@ public class JTraceClient implements IClient {
         }
         if(spyClass == null){
             try {
-                //TODO: need dynamic path
-                File jarFlie = new File("E:\\codespace\\java\\JTrace\\spy\\target\\jtrace-spy.jar");
-                instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(jarFlie));
-                System.out.println(1);
+                CodeSource codeSource = JTraceClient.class.getProtectionDomain().getCodeSource();
+                if (codeSource != null) {
+                    File arthasCoreJarFile = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
+                    File spyJarFile = new File(arthasCoreJarFile.getParentFile(),SPY_JAR);
+                    instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(spyJarFile));
+                } else {
+                    throw new IllegalStateException("can not find " + SPY_JAR);
+                }
             } catch (Throwable e) {
                 throw new IllegalStateException("Failed to load jtrace-spy.jar", e);
             }
@@ -213,6 +231,9 @@ public class JTraceClient implements IClient {
 
         EnhanceManager.destroy(instrumentation);
         cleanUpSpyReference();
+        if(shutdown != null) {
+            Runtime.getRuntime().removeShutdownHook(shutdown);
+        }
         logger.info("JTraceClient closed");
     }
 

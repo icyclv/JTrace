@@ -29,13 +29,13 @@
             <artifactId>gson</artifactId>
             <version>2.11.0</version>
         </dependency>
+
+<!--        TODO: Need to set a minimal dependencies-->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>4.1.115.final</version>
         </dependency>
-
-
 
         <dependency>
             <groupId>org.benf</groupId>
@@ -54,6 +54,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
+            <version>${lombok.version}</version>
         </dependency>
 
         <dependency>
@@ -87,4 +88,19 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
+
+
+
+    <build>
+        <resources>
+        <resource>
+            <targetPath>${project.build.directory}/classes</targetPath>
+            <directory>src/main/resources</directory>
+            <filtering>false</filtering>
+            <includes>
+                <include>lib/*</include>
+            </includes>
+        </resource>
+        </resources>
+    </build>
 </project>

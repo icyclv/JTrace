@@ -29,6 +29,9 @@ public class InfluxDBConfiguration {
     @Value("${influxdb.bucket:test}")
     private String bucket;
 
+    public boolean isEnabled() {
+        return enabled;
+    }
 
     public String getOrg() {
         return org;

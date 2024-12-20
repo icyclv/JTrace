@@ -12,16 +12,6 @@
     <artifactId>jtrace-client</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>com.second</groupId>
-            <artifactId>jtrace-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.115.final</version>
-        </dependency>
 
         <dependency>
             <groupId>net.bytebuddy</groupId>
@@ -32,13 +22,70 @@
             <artifactId>jtrace-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-<!--       slf4j-->
-<!--        <dependency>-->
-<!--            <groupId>org.slf4j</groupId>-->
-<!--            <artifactId>slf4j-api</artifactId>-->
-<!--        </dependency>-->
 
-<!--        lomb-->
     </dependencies>
+
+
+
+    <build>
+        <finalName>jtrace-client</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>jtrace-client-shade</finalName>
+                            <!-- false 会修改编译出来的jar包名字 -->
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <!-- true 创建dependency-reduced-pom.xml文件 -->
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <!-- true 编译产生源文件jar -->
+                            <createSourcesJar>true</createSourcesJar>
+                            <!-- true 修改源文件的内容 -->
+                            <shadeSourcesContent>true</shadeSourcesContent>
+                            <relocations>
+                                <!-- https://github.com/hengyunabc/arthas-repackage-deps -->
+                                <relocation>
+                                    <pattern>net.bytebuddy</pattern>
+                                    <shadedPattern>${jtrace.deps.package}.net.bytebuddy</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>ognl</pattern>
+                                    <shadedPattern>${jtrace.deps.package}.ognl</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.benf</pattern>
+                                    <shadedPattern>${jtrace.deps.package}.org.benf</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>javassist</pattern>
+                                    <shadedPattern>${jtrace.deps.package}.javassist</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google</pattern>
+                                    <shadedPattern>${jtrace.deps.package}.com.google</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>io.netty</pattern>
+                                    <shadedPattern>${jtrace.deps.package}.io.netty</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.alibaba</pattern>
+                                    <shadedPattern>${jtrace.deps.package}.com.alibaba</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

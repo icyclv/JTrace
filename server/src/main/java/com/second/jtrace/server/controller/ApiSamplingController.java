@@ -11,6 +11,7 @@ import com.second.jtrace.core.command.sampling.SamplingInfoCommand;
 import com.second.jtrace.core.command.sampling.response.SamplingInfoResponse;
 import com.second.jtrace.core.command.sampling.response.SamplingResponse;
 import com.second.jtrace.core.response.BaseResponse;
+import com.second.jtrace.server.configuration.InfluxDBConfiguration;
 import com.second.jtrace.server.dto.Result;
 import com.second.jtrace.server.netty.JTraceServer;
 import com.second.jtrace.server.util.CommandUtil;
@@ -26,9 +27,14 @@ public class ApiSamplingController {
     @Autowired
     private JTraceServer server;
 
+    @Autowired
+    private InfluxDBConfiguration influxDBConfiguration;
 
     @RequestMapping("info")
     public Result detail(@RequestParam String clientId) {
+        if(!influxDBConfiguration.isEnabled()){
+            return Result.fail("influxDB is not enable");
+        }
         SamplingInfoResponse response = CommandUtil.dealCommand(server, clientId, new SamplingInfoCommand());
         if (response.getStatus() == BaseResponse.STATUS_FAIL) {
             return Result.fail(response.getMsg());
@@ -38,6 +44,9 @@ public class ApiSamplingController {
 
     @RequestMapping("enable")
     public Result enable(@RequestParam String clientId, @RequestBody EnableSamplingCommand command) {
+        if(!influxDBConfiguration.isEnabled()){
+            return Result.fail("influxDB is not enable");
+        }
         SamplingResponse response = CommandUtil.dealCommand(server, clientId, command);
         if (response.getStatus() == BaseResponse.STATUS_FAIL) {
             return Result.fail(response.getMsg());
@@ -47,6 +56,9 @@ public class ApiSamplingController {
 
     @RequestMapping("disable")
     public Result disable(@RequestParam String clientId, @RequestBody DisableSamplingCommand command) {
+        if(!influxDBConfiguration.isEnabled()){
+            return Result.fail("influxDB is not enable");
+        }
         SamplingResponse response = CommandUtil.dealCommand(server, clientId, command);
         if (response.getStatus() == BaseResponse.STATUS_FAIL) {
             return Result.fail(response.getMsg());

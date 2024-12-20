@@ -24,6 +24,7 @@
     </dependencies>
 
     <build>
+        <finalName>jtrace-agent</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
