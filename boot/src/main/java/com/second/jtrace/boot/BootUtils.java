@@ -1,4 +1,4 @@
-package com.second.jtrace.attach;
+package com.second.jtrace.boot;
 
 import com.second.jtrace.common.AnsiLog;
 import com.second.jtrace.common.IOUtils;
@@ -32,16 +32,19 @@ public class BootUtils {
         return pid;
     }
 
-    public static boolean isValidJarPath(String agentJar, String coreJar) {
+    public static boolean isValidJarPath(String agentJar, String clientJar) {
 
 
-        if (!agentJar.endsWith(".jar") || !coreJar.endsWith(".jar")) {
+        if (!agentJar.endsWith(".jar") || !clientJar.endsWith(".jar")) {
             return false;
         }
 
         File agentJarFile = new File(agentJar);
-        File coreJarFile = new File(coreJar);
-
+        File coreJarFile = new File(clientJar);
+        System.out.println(agentJarFile.exists());
+        System.out.println(coreJarFile.exists());
+        System.out.println(agentJarFile.isFile());
+        System.out.println(coreJarFile.isFile());
         return agentJarFile.exists() && coreJarFile.exists() && agentJarFile.isFile() && coreJarFile.isFile();
 
     }
@@ -154,7 +157,7 @@ public class BootUtils {
         return javaList.get(0);
     }
 
-    public static void startAttachAgent(long pid, String agentJar, String coreJar, String server, String ip, String name) {
+    public static void startAttachAgent(long pid, String agentJar, String clientJar, String ip, String port, String name) {
         try {
             File java = findJavaExecutable();
             if (java == null) {
@@ -178,14 +181,17 @@ public class BootUtils {
             command.add(agentJar);
             command.add("--pid");
             command.add(String.valueOf(pid));
-            command.add("--server");
-            command.add(server);
-            command.add("--ip");
+            command.add("--serverIP");
             command.add(ip);
-            command.add("--name");
+            command.add("--serverPort");
+            command.add(port);
+            command.add("--clientName");
             command.add(name);
-            command.add("--core");
-            command.add(coreJar);
+            command.add("--clientJar");
+            command.add(clientJar);
+            command.add("--agentJar");
+            command.add(agentJar);
+            AnsiLog.debug("Attach command: " + command);
             ProcessBuilder pb = new ProcessBuilder(command);
             // clear JAVA_TOOL_OPTIONS to avoid conflict with other tools
             pb.environment().put("JAVA_TOOL_OPTIONS", "");
@@ -228,6 +234,7 @@ public class BootUtils {
                     AnsiLog.error("attach fail, targetPid: " + pid);
                     System.exit(1);
                 }
+                AnsiLog.info("attach success, targetPid: " + pid);
             } catch (Throwable e) {
                 // ignore
             }

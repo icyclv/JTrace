@@ -1,23 +1,28 @@
-package com.second.jtrace.attach;
+package com.second.jtrace.boot;
 
 import com.second.jtrace.common.AnsiLog;
+import com.second.jtrace.common.JTraceConstants;
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 
+import java.io.File;
 import java.util.*;
 
-import static com.second.jtrace.attach.BootUtils.isValidJarPath;
-import static com.second.jtrace.attach.BootUtils.readPid;
+import static com.second.jtrace.boot.BootUtils.isValidJarPath;
+import static com.second.jtrace.boot.BootUtils.readPid;
 
 public class AgentBootstrap {
+    private static final String AGENT_JAR = "jtrace-agent.jar";
+    private static final String CLIENT_JAR = "jtrace-client.jar";
 
     public static void main(String[] args) {
         Map<String, String> defaultValues = new HashMap<>();
-        defaultValues.put("server", "localhost");
-        defaultValues.put("ip", "127.0.0.1");
-        defaultValues.put("name", "default-agent");
-        defaultValues.put("agentJar", "~/.jtrace/lib/agent.jar");
-        defaultValues.put("coreJar", "~/.jtrace/lib/core.jar");
+        defaultValues.put("serverIP", "127.0.0.1");
+        defaultValues.put("serverPort","4090");
+        defaultValues.put("clientName", "default-agent");
+
+        defaultValues.put("agentJar", JTraceConstants.LIB_DIR+File.separator+AGENT_JAR);
+        defaultValues.put("clientJar", JTraceConstants.LIB_DIR+ File.separator + CLIENT_JAR);
 
         Map<String, String> config = new HashMap<>(defaultValues);
         BootUtils.parseConfig(args, config);
@@ -34,8 +39,8 @@ public class AgentBootstrap {
             BootUtils.parseConfig(newArgs, config);
         }
 
-        if (!isValidJarPath(config.get("agentJar"), config.get("coreJar"))) {
-            System.err.println("Invalid path. Please check your input.");
+        if (!isValidJarPath(config.get("agentJar"), config.get("clientJar"))) {
+            System.err.println("Invalid jar path. Please check your input.");
             return;
         }
 
@@ -62,7 +67,7 @@ public class AgentBootstrap {
             }
         }
 
-        BootUtils.startAttachAgent(pid, config.get("agentJar"), config.get("coreJar"), config.get("server"), config.get("ip"), config.get("name"));
+        BootUtils.startAttachAgent(pid, config.get("agentJar"), config.get("clientJar"), config.get("serverIP"), config.get("serverPort"), config.get("clientName"));
 
 
     }

@@ -16,11 +16,11 @@ fi
 
 # 创建 .jtrace 目录结构
 echo "Creating .jtrace directory structure..."
-JTRACE_DIR="$HOME/.jtrace/jars"
+JTRACE_DIR="$HOME/.jtrace/lib"
 mkdir -p "$JTRACE_DIR"
 
 # 复制并重命名文件
-echo "Copying files to .jtrace/jars..."
+echo "Copying files to .jtrace/lib..."
 
 # 复制 boot jar
 cp -f "boot/target/jtrace-boot-jar-with-dependencies.jar" "$JTRACE_DIR/jtrace-boot.jar"

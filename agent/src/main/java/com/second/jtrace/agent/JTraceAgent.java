@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 
 public class JTraceAgent {
-    private static final String JTRACE_CLIENT = "com.second.jtrace.core.client.JTraceClient";
+    private static final String JTRACE_CLIENT = "com.second.jtrace.client.JTraceClient";
     private static volatile ClassLoader jtraceClassLoader;
 
     public static void resetClassLoader() {
@@ -25,32 +25,33 @@ public class JTraceAgent {
         attach(args, inst);
     }
 
-    public static ClassLoader getClassLoader(File arthasCoreJarFile) throws MalformedURLException {
+    public static ClassLoader getClassLoader(File arthasClientJarFile) throws MalformedURLException {
         if (jtraceClassLoader == null) {
-            jtraceClassLoader = new JTraceClassloader(new URL[]{arthasCoreJarFile.toURI().toURL()});
+            jtraceClassLoader = new JTraceClassloader(new URL[]{arthasClientJarFile.toURI().toURL()});
         }
         return jtraceClassLoader;
     }
 
     private static synchronized void attach(String args, final Instrumentation inst) {
         try {
-            String[] configs = args.split(",");
+            System.out.println("JTraceAgent attach args: " + args);
+            String[] configs = args.split(";");
             if (configs.length != 4) {
-                throw new IllegalArgumentException("Invalid agent arguments! args format: appName host port corePath");
+                throw new IllegalArgumentException("Invalid agent arguments! args format: appName host port clientPath");
             }
             String appName = configs[0];
             String ip = configs[1];
             String port = configs[2];
-            String corePath = configs[3];
+            String clientJar = configs[3];
 
-            File coreJarFile = new File(corePath);
-            if (!coreJarFile.exists() || !coreJarFile.isFile()) {
-                throw new IllegalArgumentException("Invalid core jar path: " + corePath);
+            File clientJarFile = new File(clientJar);
+            if (!clientJarFile.exists() || !clientJarFile.isFile()) {
+                throw new IllegalArgumentException("Invalid client jar path: " + clientJar);
             }
-            final ClassLoader agentLoader = getClassLoader(coreJarFile);
+            final ClassLoader agentLoader = getClassLoader(clientJarFile);
             Class<?> clientClass = agentLoader.loadClass(JTRACE_CLIENT);
-            // new JTraceClient(appName, ip, port, inst);
-            clientClass.getConstructor(String.class, String.class, int.class, Instrumentation.class).newInstance(appName, ip, Integer.parseInt(port), inst);
+            // new JTraceClient(inst,appName, ip, port);
+            clientClass.getConstructor(Instrumentation.class, String.class, String.class, int.class).newInstance(inst,appName, ip, Integer.parseInt(port) );
 
 
         } catch (Exception ex) {
@@ -74,18 +75,18 @@ public class JTraceAgent {
             }
 
             String pid = config.get("pid");
-            String appName = config.get("name");
-            String ip = config.get("ip");
-            String port = config.get("port");
+            String appName = config.get("clientName");
+            String ip = config.get("serverIP");
+            String port = config.get("serverPort");
             String agentPath = config.get("agentJar");
-            String corePath = config.get("coreJar");
+            String clientJar = config.get("clientJar");
 
             if (appName.contains(";")) {
                 throw new IllegalArgumentException("Name cannot contain ';'");
             }
 
             VirtualMachine virtualMachine = VirtualMachine.attach(pid);
-            virtualMachine.loadAgent(agentPath, appName + ";" + ip + ";" + port + ";" + corePath);
+            virtualMachine.loadAgent(agentPath, appName + ";" + ip + ";" + port + ";" + clientJar);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
