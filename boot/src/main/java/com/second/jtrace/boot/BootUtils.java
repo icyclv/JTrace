@@ -229,7 +229,7 @@ public class BootUtils {
                 redirectStdout.join();
                 redirectStderr.join();
 
-                int exitValue = proc.exitValue();
+                int exitValue = proc.waitFor();
                 if (exitValue != 0) {
                     AnsiLog.error("attach fail, targetPid: " + pid);
                     System.exit(1);
