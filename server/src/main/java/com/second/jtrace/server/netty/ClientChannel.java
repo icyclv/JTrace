@@ -69,7 +69,7 @@ public class ClientChannel {
         }
     }
 
-    public void sendMessage(IMessage message){
+    public void sendMessage(IMessage message) {
         channel.writeAndFlush(message);
     }
 

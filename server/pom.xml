@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -51,7 +51,6 @@
     </dependencies>
 
 
-
     <build>
         <finalName>jtrace-server</finalName>
         <plugins>
@@ -76,7 +75,9 @@
                     <nodeVersion>v16.20.0</nodeVersion>
                     <npmVersion>8.19.4</npmVersion>
                     <nodeDownloadRoot>https://registry.npmmirror.com/-/binary/node/</nodeDownloadRoot>
-                    <npmDownloadRoot>https://s3.jcloud.sjtu.edu.cn/899a892efef34b1b944a19981040f55b-oss01/macports/distfiles/npm8/</npmDownloadRoot>
+                    <npmDownloadRoot>
+                        https://s3.jcloud.sjtu.edu.cn/899a892efef34b1b944a19981040f55b-oss01/macports/distfiles/npm8/
+                    </npmDownloadRoot>
                 </configuration>
                 <executions>
                     <execution>

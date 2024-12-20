@@ -13,9 +13,8 @@ import static java.lang.String.format;
 
 
 public class ObjectRender {
-    private static final Logger logger = LoggerFactory.getLogger(ObjectRender.class);
-
     public static final int MAX_DEEP = 4;
+    private static final Logger logger = LoggerFactory.getLogger(ObjectRender.class);
     private final static String TAB = "    ";
     private final static Map<Byte, String> ASCII_MAP = new HashMap<Byte, String>();
 
@@ -62,6 +61,17 @@ public class ObjectRender {
     public ObjectRender(int sizeLimit, int deep) {
         this.sizeLimit = sizeLimit;
         this.deep = deep > MAX_DEEP ? MAX_DEEP : deep;
+    }
+
+    /**
+     * 是否展开当前深度的节点
+     *
+     * @param deep   当前节点的深度
+     * @param expand 展开极限
+     * @return true:当前节点需要展开 / false:当前节点不需要展开
+     */
+    private static boolean isExpand(int deep, int expand) {
+        return deep < expand;
     }
 
     public String getObjectInfo(Object obj) {
@@ -603,17 +613,6 @@ public class ObjectRender {
 
             }
         }
-    }
-
-    /**
-     * 是否展开当前深度的节点
-     *
-     * @param deep   当前节点的深度
-     * @param expand 展开极限
-     * @return true:当前节点需要展开 / false:当前节点不需要展开
-     */
-    private static boolean isExpand(int deep, int expand) {
-        return deep < expand;
     }
 
     /**

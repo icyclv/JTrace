@@ -6,9 +6,7 @@ import java.security.CodeSource;
 import java.util.*;
 
 /**
- * 
  * @author hengyunabc 2019-09-06
- *
  */
 public class Log4jHelper {
 

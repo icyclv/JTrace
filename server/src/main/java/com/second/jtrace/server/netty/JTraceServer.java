@@ -12,7 +12,10 @@ import com.second.jtrace.core.sampling.bean.SamplingMessage;
 import com.second.jtrace.server.dao.InfluxDBDao;
 import com.second.jtrace.server.websocket.WsServerEndpoint;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -26,23 +29,18 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class JTraceServer {
     private static final Logger logger = LoggerFactory.getLogger(JTraceServer.class);
-
+    private final InfluxDBDao influxDBDao;
     private int port;
-
     /**
      * 连接的客户端列表
      */
     private Map<String, ClientChannel> clientChannels = new ConcurrentHashMap<>();
-
     /**
      * 所有活跃的Channel
      */
     private ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
-
-    private final InfluxDBDao influxDBDao;
 
     public JTraceServer(int port, InfluxDBDao influxDBDao) {
         this.port = port;
@@ -66,7 +64,7 @@ public class JTraceServer {
             // 绑定端口
             ChannelFuture future = bootstrap.bind(port).sync();
             logger.info("Netty Server started on port: {}", port);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("Netty Server start error", e);
         }
 

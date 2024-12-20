@@ -14,6 +14,7 @@ public class SystemInfoUtil {
     public static final String HOST_NAME;
 
     public static final String JVM_NAME;
+
     // 静态代码块初始化常量
     static {
         LOCAL_IP_ADDRESS = initLocalIpAddress();
@@ -45,6 +46,7 @@ public class SystemInfoUtil {
     private static String initJvmName() {
         return ManagementFactory.getRuntimeMXBean().getName();
     }
+
     /**
      * 初始化主机名称
      */

@@ -5,20 +5,20 @@ import com.google.gson.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
-public class GsonSerializer{
+public class GsonSerializer {
 
-    public static  <T> T deserialize(Class<T> clazz, byte[] bytes) {
+    public static <T> T deserialize(Class<T> clazz, byte[] bytes) {
         try {
             Gson gson = new GsonBuilder().registerTypeAdapter(Class.class, new ClassCodec()).create();
             String json = new String(bytes, StandardCharsets.UTF_8);
             return gson.fromJson(json, clazz);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public static  <T> byte[] serialize(T object) {
+    public static <T> byte[] serialize(T object) {
         Gson gson = new GsonBuilder().registerTypeAdapter(Class.class, new ClassCodec()).create();
         String json = gson.toJson(object);
         return json.getBytes(StandardCharsets.UTF_8);

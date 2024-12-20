@@ -38,10 +38,10 @@ public class ProcFileUtils {
         return getProcFileAsMap(PROC_SELF_STATUS_FILE);
     }
 
-    public static Map<String, String>  getProcIO() {
+    public static Map<String, String> getProcIO() {
         return getProcFileAsMap(PROC_SELF_IO_FILE);
     }
-    
+
     public static List<Map<String, Object>> getProcStatCpuTime() {
         List<String[]> rows = getProcFileAsRowColumn(PROC_STAT_FILE);
         return getProcStatCpuTime(rows);
@@ -94,11 +94,11 @@ public class ProcFileUtils {
         if (data == null) {
             return null;
         }
-        
+
         if (key == null) {
             return null;
         }
-        
+
         String value = data.get(key);
         if (value == null) {
             return null;
@@ -111,11 +111,11 @@ public class ProcFileUtils {
         if (rows == null) {
             return Collections.emptyList();
         }
-        
+
         final int minValuesInRow = 6;
 
         List<Map<String, Object>> result = new ArrayList<>();
-        
+
         for (String[] row : rows) {
             if (row.length >= minValuesInRow && row[0].toLowerCase().startsWith("cpu")) {
                 Map<String, Object> map = new HashMap<>();
@@ -132,24 +132,24 @@ public class ProcFileUtils {
                 }
             }
         }
-        
+
         return result;
     }
 
     public static String getPid() {
         return getPid(PROC_SELF_STATUS_FILE);
     }
-    
+
     public static String getPid(String filePath) {
         // See http://man7.org/linux/man-pages/man5/proc.5.html for details about proc status
         Map<String, String> procStatus = getProcFileAsMap(filePath);
         if (procStatus != null) {
             return procStatus.get("Pid");
         }
-        
+
         return null;
     }
-    
+
     public static String getCmdline() {
         try {
             File file = new File(PROC_SELF_CMDLINE_FILE);
@@ -158,7 +158,7 @@ public class ProcFileUtils {
             }
 
             String cmdline = new String(Files.readAllBytes(Paths.get(file.getPath())));
-            cmdline = cmdline.replace((char)0, ' ');
+            cmdline = cmdline.replace((char) 0, ' ');
             return cmdline;
         } catch (Throwable ex) {
             logger.warn("Failed to read file " + PROC_SELF_CMDLINE_FILE, ex);

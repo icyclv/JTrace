@@ -59,7 +59,7 @@ public class LoggerLevelCommand extends AbstractLoggerCommand {
         LoggerTypes loggerTypes = findLoggerTypes(inst, classLoader);
 
         boolean result = false;
-        if(loggerTypes.contains(LoggerType.LOG4J)) {
+        if (loggerTypes.contains(LoggerType.LOG4J)) {
             try {
                 Boolean updateResult = updateLevel(inst, classLoader, Log4jHelper.class);
                 if (Boolean.TRUE.equals(updateResult)) {
@@ -69,7 +69,7 @@ public class LoggerLevelCommand extends AbstractLoggerCommand {
                 logger.warn("logger command update log4j level error", e);
             }
         }
-        if(loggerTypes.contains(LoggerType.LOGBACK)) {
+        if (loggerTypes.contains(LoggerType.LOGBACK)) {
             try {
                 Boolean updateResult = updateLevel(inst, classLoader, LogbackHelper.class);
                 if (Boolean.TRUE.equals(updateResult)) {
@@ -79,7 +79,7 @@ public class LoggerLevelCommand extends AbstractLoggerCommand {
                 logger.warn("logger command update logback level error", e);
             }
         }
-        if(loggerTypes.contains(LoggerType.LOG4J2)) {
+        if (loggerTypes.contains(LoggerType.LOG4J2)) {
             try {
                 Boolean updateResult = updateLevel(inst, classLoader, Log4j2Helper.class);
                 if (Boolean.TRUE.equals(updateResult)) {
@@ -131,7 +131,7 @@ public class LoggerLevelCommand extends AbstractLoggerCommand {
     private LoggerTypes findLoggerTypes(Instrumentation inst, ClassLoader classLoader) {
         LoggerTypes loggerTypes = new LoggerTypes();
         for (Class<?> clazz : inst.getAllLoadedClasses()) {
-            if(classLoader == clazz.getClassLoader()) {
+            if (classLoader == clazz.getClassLoader()) {
                 updateLoggerType(loggerTypes, classLoader, clazz.getName());
             }
         }

@@ -1,15 +1,15 @@
 <template>
   <el-container>
-    <el-aside width="600px" style="text-align: left;overflow-x: hidden">
+    <el-aside style="text-align: left;overflow-x: hidden" width="600px">
       <el-form ref="form" :model="methodInfo" label-width="150px">
         <el-form-item label="类名">
-          <el-input v-model="methodInfo.className" style="width: 100%;" clearable
-                    placeholder="请输入类名">
+          <el-input v-model="methodInfo.className" clearable placeholder="请输入类名"
+                    style="width: 100%;">
           </el-input>
         </el-form-item>
         <el-form-item label="方法名">
-          <el-input v-model="methodInfo.methodName" style="width: 100%;" clearable
-                    placeholder="请输入方法名">
+          <el-input v-model="methodInfo.methodName" clearable placeholder="请输入方法名"
+                    style="width: 100%;">
           </el-input>
         </el-form-item>
         <el-form-item label="类加载器Hash">
@@ -23,20 +23,20 @@
 
     <el-container>
       <el-header style="height: 30px;text-align: left">
-        <el-button @click="callMethod" type="primary">调用方法</el-button>
-        <el-button @click="showMethodSourceCode" type="info">查看源码</el-button>
+        <el-button type="primary" @click="callMethod">调用方法</el-button>
+        <el-button type="info" @click="showMethodSourceCode">查看源码</el-button>
       </el-header>
       <el-main>
         <div style="text-align: left;line-height: 14px">执行结果：{{ callResult }}</div>
       </el-main>
     </el-container>
-    <el-dialog title="源码" :visible.sync="dialogSourceCodeVisible" :fullscreen="true" :modal="false">
+    <el-dialog :fullscreen="true" :modal="false" :visible.sync="dialogSourceCodeVisible" title="源码">
       <MonacoEditor
-          language="java"
-          :height="dynamicHeight+120"
           :key="randomKey"
           :code="code"
-          :editorOptions="options" style="text-align: left">
+          :editorOptions="options"
+          :height="dynamicHeight+120"
+          language="java" style="text-align: left">
       </MonacoEditor>
     </el-dialog>
   </el-container>
@@ -87,9 +87,9 @@ export default {
       command.express = "#instance=instances[0],#result=#instance." + this.methodInfo.methodName + "(" + this.methodInfo.parameters + "),#result";
       Vue.axios.post('/api/vmtool/execute?clientId=' + this.clientId
           , command).then((response) => {
-        if(response.data.success){
+        if (response.data.success) {
           this.callResult = response.data.data.returnObj;
-        }else{
+        } else {
           this.$message.error(response.data.errorMsg);
         }
       });
@@ -101,11 +101,11 @@ export default {
             , "classLoaderHash": this.methodInfo.classLoaderHash
             , "methodName": this.methodInfo.methodName
           }).then((response) => {
-        if(response.data.success){
+        if (response.data.success) {
           this.randomKey = Math.floor(Math.random() * 100000);
           this.code = response.data.data.sourceInfo.source;
           this.dialogSourceCodeVisible = true;
-        }else{
+        } else {
           this.$message.error(response.data.errorMsg);
         }
       });

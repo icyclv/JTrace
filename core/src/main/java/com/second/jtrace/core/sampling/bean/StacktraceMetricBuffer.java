@@ -1,5 +1,3 @@
-
-
 package com.second.jtrace.core.sampling.bean;
 
 import java.util.Map;
@@ -12,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class StacktraceMetricBuffer {
     private AtomicLong lastResetMillis = new AtomicLong(System.currentTimeMillis());
-    
+
     private volatile ConcurrentHashMap<Stacktrace, AtomicLong> metrics = new ConcurrentHashMap<>();
 
     public void appendValue(Stacktrace stacktrace) {
@@ -23,13 +21,13 @@ public class StacktraceMetricBuffer {
     public long getLastResetMillis() {
         return lastResetMillis.get();
     }
-    
+
     public Map<Stacktrace, AtomicLong> reset() {
         ConcurrentHashMap<Stacktrace, AtomicLong> oldCopy = metrics;
         metrics = new ConcurrentHashMap<>();
-        
+
         lastResetMillis.set(System.currentTimeMillis());
-        
+
         return oldCopy;
     }
 }

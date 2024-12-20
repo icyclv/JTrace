@@ -17,7 +17,6 @@
 package com.second.jtrace.core.sampling.profiler;
 
 
-
 import com.second.jtrace.common.JTraceConstants;
 import com.second.jtrace.core.sampling.Reporter;
 import com.second.jtrace.core.sampling.bean.ClassAndMethod;
@@ -33,7 +32,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * This class reads the stacktraces from the given buffer and send out via given reporter.
  */
-public class StacktraceReporterProfiler  implements Profiler {
+public class StacktraceReporterProfiler implements Profiler {
     public static final String PROFILER_NAME = "Stacktrace";
 
     private StacktraceMetricBuffer buffer;
@@ -62,7 +61,7 @@ public class StacktraceReporterProfiler  implements Profiler {
 
     @Override
     public void profile() {
-        Map<String,Object> resultMap = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>();
         if (buffer == null) {
             return;
         }
@@ -72,32 +71,32 @@ public class StacktraceReporterProfiler  implements Profiler {
         }
 
         long startEpoch = buffer.getLastResetMillis();
-        
+
         Map<Stacktrace, AtomicLong> metrics = buffer.reset();
 
         long endEpoch = buffer.getLastResetMillis();
 
         resultMap.put("startEpoch", startEpoch);
         resultMap.put("endEpoch", endEpoch);
-        List<Map<String,Object>> stacktraces = new ArrayList<>();
+        List<Map<String, Object>> stacktraces = new ArrayList<>();
         for (Map.Entry<Stacktrace, AtomicLong> entry : metrics.entrySet()) {
             Map<String, Object> map = new HashMap<>();
 
 
             Stacktrace stacktrace = entry.getKey();
-            
+
             map.put("threadName", stacktrace.getThreadName());
             map.put("threadState", stacktrace.getThreadState());
 
             ClassAndMethod[] classAndMethodArray = stacktrace.getStack();
-            if (classAndMethodArray!= null) {
+            if (classAndMethodArray != null) {
                 List<String> stackArray = new ArrayList<>(classAndMethodArray.length);
                 for (ClassAndMethod classAndMethod : classAndMethodArray) {
                     stackArray.add(classAndMethod.getClassName() + "." + classAndMethod.getMethodName());
                 }
                 map.put("stacktrace", stackArray);
             }
-            
+
             map.put("count", entry.getValue().get());
             stacktraces.add(map);
         }

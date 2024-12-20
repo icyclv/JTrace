@@ -2,16 +2,16 @@
   <div>
     <el-row>
       <el-col style="text-align: left;">
-        <el-select v-model="classLoaderName" style="width: 400px;margin-right: 10px" clearable
-                   placeholder="请输入类加载器名">
+        <el-select v-model="classLoaderName" clearable placeholder="请输入类加载器名"
+                   style="width: 400px;margin-right: 10px">
           <el-option key="org.springframework.boot.loader.LaunchedURLClassLoader"
                      label="org.springframework.boot.loader.LaunchedURLClassLoader"
                      value="org.springframework.boot.loader.LaunchedURLClassLoader"></el-option>
           <el-option key="sun.misc.Launcher$AppClassLoader" label="sun.misc.Launcher$AppClassLoader"
                      value="sun.misc.Launcher$AppClassLoader"></el-option>
         </el-select>
-        <el-button @click="showConfigInfo()" type="primary">查询配置项</el-button>
-        <el-button @click="showResourceInfo()" type="primary">查询资源文件</el-button>
+        <el-button type="primary" @click="showConfigInfo()">查询配置项</el-button>
+        <el-button type="primary" @click="showResourceInfo()">查询资源文件</el-button>
       </el-col>
     </el-row>
     <el-row style="margin-top:10px">

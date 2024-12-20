@@ -25,7 +25,8 @@ public class JTraceConstants {
     public static final long DEFAULT_METRIC_INTERVAL = 60000;
     public static final int MAX_STRING_LENGTH = 800000;
     public static final String LIB_DIR;
-    static{
+
+    static {
         JTRACE_HOME = getJTraceHome();
         TMP_DIR = getTempDir();
         OUTPUT_DIR = getOutputDir();
@@ -33,21 +34,21 @@ public class JTraceConstants {
     }
 
 
-    public static String getJTraceHome(){
-        String path="";
+    public static String getJTraceHome() {
+        String path = "";
         String dirName = ".jtrace";
-        path = System.getProperty("user.home") + File.separator +dirName;
+        path = System.getProperty("user.home") + File.separator + dirName;
         File file = new File(path);
-        if(!file.exists()){
+        if (!file.exists()) {
             file.mkdirs();
         }
         return path;
     }
 
-    public static String getTempDir(){
-        String path=JTRACE_HOME + File.separator + "tmp";
+    public static String getTempDir() {
+        String path = JTRACE_HOME + File.separator + "tmp";
         File file = new File(path);
-        if(!file.exists()){
+        if (!file.exists()) {
             file.mkdirs();
         }
         return path;
@@ -63,11 +64,10 @@ public class JTraceConstants {
     }
 
 
-
-    public static String getOutputDir(){
-        String path=JTRACE_HOME + File.separator + "output"+File.separator;
+    public static String getOutputDir() {
+        String path = JTRACE_HOME + File.separator + "output" + File.separator;
         File file = new File(path);
-        if(!file.exists()){
+        if (!file.exists()) {
             file.mkdirs();
         }
         return path;

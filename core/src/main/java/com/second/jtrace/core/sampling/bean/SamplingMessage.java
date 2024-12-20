@@ -10,5 +10,5 @@ import java.util.Map;
 @AllArgsConstructor
 public class SamplingMessage implements IMessage {
     String profilerName;
-    Map<String,Object> result;
+    Map<String, Object> result;
 }

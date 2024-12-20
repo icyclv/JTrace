@@ -65,12 +65,12 @@ export default {
             , "level": this.loggerInfo.effectiveLevel,
             "classLoaderHash": this.loggerInfo.classLoaderHash
           }).then((response) => {
-            if(response.data.success){
-              this.$message.success(response.data.data.msg);
-              this.$emit("closeLoggerDialog");
-            }else{
-              this.$message.error(response.data.errorMsg);
-            }
+        if (response.data.success) {
+          this.$message.success(response.data.data.msg);
+          this.$emit("closeLoggerDialog");
+        } else {
+          this.$message.error(response.data.errorMsg);
+        }
       });
     }
   }

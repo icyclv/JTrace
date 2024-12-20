@@ -19,17 +19,17 @@ import com.alibaba.deps.org.objectweb.asm.tree.AbstractInsnNode;
 import com.alibaba.deps.org.objectweb.asm.tree.ClassNode;
 import com.alibaba.deps.org.objectweb.asm.tree.MethodInsnNode;
 import com.alibaba.deps.org.objectweb.asm.tree.MethodNode;
-import com.second.jtrace.core.listener.InvokeTraceable;
-import com.second.jtrace.core.spy.SpyImpl;
 import com.second.jtrace.core.listener.AdviceListenerAdapter;
 import com.second.jtrace.core.listener.AdviceListenerManager;
+import com.second.jtrace.core.listener.InvokeTraceable;
+import com.second.jtrace.core.spy.SpyImpl;
 import com.second.jtrace.core.spy.SpyInterceptors;
 import com.second.jtrace.core.util.ClassUtils;
 import com.second.jtrace.core.util.FileUtils;
+import com.second.jtrace.spy.SpyAPI;
 import org.benf.cfr.reader.bytecode.analysis.parse.utils.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.second.jtrace.spy.SpyAPI;
 
 import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
@@ -42,16 +42,14 @@ import static java.lang.System.arraycopy;
 
 
 public class EnhancerTransformer implements ClassFileTransformer {
+    public final static Map<Class<?>/* Class */, Object> classBytesCache = new WeakHashMap<Class<?>, Object>();
     private static final Logger logger = LoggerFactory.getLogger(EnhancerTransformer.class);
+    private static SpyImpl spyImpl = new SpyImpl();
 
-    /**
-     * 需要增强或者转换的类集合
-     */
-    private Set<Class<?>> classesToEnhance;
-    /**
-     * 需要增强或者转换的方法
-     */
-    private String methodName;
+    static {
+        SpyAPI.setSpy(spyImpl);
+    }
+
     /**
      * 切面侦听
      */
@@ -61,6 +59,14 @@ public class EnhancerTransformer implements ClassFileTransformer {
      */
     private final EnhancerAffect affect;
     /**
+     * 需要增强或者转换的类集合
+     */
+    private Set<Class<?>> classesToEnhance;
+    /**
+     * 需要增强或者转换的方法
+     */
+    private String methodName;
+    /**
      * 是否trace
      */
     private boolean tracing;
@@ -68,15 +74,6 @@ public class EnhancerTransformer implements ClassFileTransformer {
      * 是否跳过JDK方法
      */
     private boolean skipJDKTrace;
-
-
-    public final static Map<Class<?>/* Class */, Object> classBytesCache = new WeakHashMap<Class<?>, Object>();
-
-    private static SpyImpl spyImpl = new SpyImpl();
-
-    static {
-        SpyAPI.setSpy(spyImpl);
-    }
 
     public EnhancerTransformer(Set<Class<?>> classSet, String methodName, AdviceListenerAdapter listener
             , boolean isTracing, boolean isSkipJDKTrace) {
@@ -87,6 +84,32 @@ public class EnhancerTransformer implements ClassFileTransformer {
         this.skipJDKTrace = isSkipJDKTrace;
         listener.setEnhancerTransformer(this);
         this.affect = new EnhancerAffect();
+    }
+
+    /**
+     * 是否过滤目前暂不支持的类
+     */
+    private static Pair<Boolean, String> isUnsupportedClass(Class<?> clazz) {
+        if (ClassUtils.isLambdaClass(clazz)) {
+            return new Pair<Boolean, String>(Boolean.TRUE, "class is lambda");
+        }
+
+        if (clazz.equals(Integer.class)) {
+            return new Pair<Boolean, String>(Boolean.TRUE, "class is java.lang.Integer");
+        }
+
+        if (clazz.equals(Class.class)) {
+            return new Pair<Boolean, String>(Boolean.TRUE, "class is java.lang.Class");
+        }
+
+        if (clazz.equals(Method.class)) {
+            return new Pair<Boolean, String>(Boolean.TRUE, "class is java.lang.Method");
+        }
+
+        if (clazz.isArray()) {
+            return new Pair<Boolean, String>(Boolean.TRUE, "class is array");
+        }
+        return new Pair<Boolean, String>(Boolean.FALSE, "");
     }
 
     public EnhancerAffect enhance(Instrumentation instrumentation) {
@@ -115,7 +138,6 @@ public class EnhancerTransformer implements ClassFileTransformer {
 
         return affect;
     }
-
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined
@@ -347,32 +369,6 @@ public class EnhancerTransformer implements ClassFileTransformer {
      */
     private boolean isUnsafeClass(Class<?> clazz) {
         return clazz.getClassLoader() == null;
-    }
-
-    /**
-     * 是否过滤目前暂不支持的类
-     */
-    private static Pair<Boolean, String> isUnsupportedClass(Class<?> clazz) {
-        if (ClassUtils.isLambdaClass(clazz)) {
-            return new Pair<Boolean, String>(Boolean.TRUE, "class is lambda");
-        }
-
-        if (clazz.equals(Integer.class)) {
-            return new Pair<Boolean, String>(Boolean.TRUE, "class is java.lang.Integer");
-        }
-
-        if (clazz.equals(Class.class)) {
-            return new Pair<Boolean, String>(Boolean.TRUE, "class is java.lang.Class");
-        }
-
-        if (clazz.equals(Method.class)) {
-            return new Pair<Boolean, String>(Boolean.TRUE, "class is java.lang.Method");
-        }
-
-        if (clazz.isArray()) {
-            return new Pair<Boolean, String>(Boolean.TRUE, "class is array");
-        }
-        return new Pair<Boolean, String>(Boolean.FALSE, "");
     }
 
     /**

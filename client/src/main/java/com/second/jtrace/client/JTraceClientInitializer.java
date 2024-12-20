@@ -18,7 +18,6 @@ public class JTraceClientInitializer extends ChannelInitializer<SocketChannel> {
     private final LoggingHandler LOGGING_HANDLER = new LoggingHandler(LogLevel.WARN);
 
 
-
     public JTraceClientInitializer(JTraceClient client) {
         this.client = client;
 
@@ -26,13 +25,13 @@ public class JTraceClientInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
-        ch.pipeline().addLast( new ProtocolFrameDecoder());
+        ch.pipeline().addLast(new ProtocolFrameDecoder());
         ch.pipeline().addLast(LOGGING_HANDLER);
         ch.pipeline().addLast(MESSAGE_CODEC);
         ch.pipeline().addLast(new IdleStateHandler(0, 5, 0));
         ch.pipeline().addLast(new ChannelDuplexHandler() {
             @Override
-            public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception{
+            public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
                 if (evt instanceof IdleStateEvent) {
                     IdleStateEvent event = (IdleStateEvent) evt;
                     handleIdleEvent(ctx, event);

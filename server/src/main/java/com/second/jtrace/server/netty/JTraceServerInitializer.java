@@ -17,31 +17,30 @@ public class JTraceServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private static final MessageCodec MESSAGE_CODEC = new MessageCodec();
     private static final LoggingHandler LOGGING_HANDLER = new LoggingHandler(LogLevel.WARN);
-    private final JTraceServer server;
     private static final AttributeKey<String> CLIENT_ID_KEY = AttributeKey.valueOf("client_id");
+    private final JTraceServer server;
 
     public JTraceServerInitializer(JTraceServer jTraceServer) {
         this.server = jTraceServer;
     }
+
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
-        ch.pipeline().addLast( new ProtocolFrameDecoder());
+        ch.pipeline().addLast(new ProtocolFrameDecoder());
         ch.pipeline().addLast(LOGGING_HANDLER);
         ch.pipeline().addLast(MESSAGE_CODEC);
         ch.pipeline().addLast(new IdleStateHandler(10, 0, 0));
         ch.pipeline().addLast(new ChannelDuplexHandler() {
             @Override
-            public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception{
-              if(evt instanceof IdleStateEvent){
-                handleIdleEvent(ctx, (IdleStateEvent) evt);
-              }else {
-                super.userEventTriggered(ctx, evt);
-              }
+            public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+                if (evt instanceof IdleStateEvent) {
+                    handleIdleEvent(ctx, (IdleStateEvent) evt);
+                } else {
+                    super.userEventTriggered(ctx, evt);
+                }
             }
         });
         ch.pipeline().addLast(new JTraceServerHandler(server));
-
-
 
 
     }
@@ -51,8 +50,8 @@ public class JTraceServerInitializer extends ChannelInitializer<SocketChannel> {
             case READER_IDLE:
                 Channel channel = ctx.channel();
                 String clientId = channel.attr(CLIENT_ID_KEY).get();
-                    server.removeClient(clientId);
-                    channel.close();
+                server.removeClient(clientId);
+                channel.close();
                 break;
             case WRITER_IDLE:
                 break;

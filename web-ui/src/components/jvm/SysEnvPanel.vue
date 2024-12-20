@@ -2,10 +2,10 @@
   <div>
     <el-row>
       <el-col style="text-align: left;">
-        <el-button @click="showSysEnvs()" type="primary">刷新数据</el-button>
+        <el-button type="primary" @click="showSysEnvs()">刷新数据</el-button>
       </el-col>
     </el-row>
-    <GroupLabelValue :group-obj="sysEnvs" group-name="环境变量" :style="{height:dynamicHeight}"
+    <GroupLabelValue :group-obj="sysEnvs" :style="{height:dynamicHeight}" group-name="环境变量"
                      style="height: 480px;overflow-y: scroll;margin-top: 10px;"></GroupLabelValue>
   </div>
 </template>
@@ -38,9 +38,9 @@ export default {
     showSysEnvs() {
       Vue.axios.post('/api/jvm/sysenv?clientId=' + this.clientId
           , {}).then((response) => {
-        if(response.data.success){
+        if (response.data.success) {
           this.sysEnvs = response.data.data.info;
-        }else{
+        } else {
           this.$message.error(response.data.errorMsg);
         }
       });

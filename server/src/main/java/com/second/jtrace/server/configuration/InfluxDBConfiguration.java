@@ -2,7 +2,6 @@ package com.second.jtrace.server.configuration;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -37,14 +36,14 @@ public class InfluxDBConfiguration {
         return org;
     }
 
-   public String getBucket() {
+    public String getBucket() {
         return bucket;
     }
 
     @Bean
     @ConditionalOnProperty(name = "influxdb.enabled", havingValue = "true")
     public InfluxDBClient influxDBClient() {
-        if(!enabled) {
+        if (!enabled) {
             return null;
         }
 

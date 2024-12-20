@@ -47,17 +47,17 @@ public class LoggerInfoCommand extends AbstractLoggerCommand {
 
     @Override
     public IResponse executeForResponse(IClient client) {
-        try{
-        LoggerInfoResponse loggerInfoResponse = new LoggerInfoResponse();
-        List<LoggerInfoVO> loggerInfos = new ArrayList<>();
-        initLoggerInfos(client.getInstrumentation(), loggerInfos);
-        loggerInfoResponse.setLoggerInfos(loggerInfos);
-        if (loggerInfos.isEmpty()) {
-            return createExceptionResponse("Can not find any logger info");
-        }
+        try {
+            LoggerInfoResponse loggerInfoResponse = new LoggerInfoResponse();
+            List<LoggerInfoVO> loggerInfos = new ArrayList<>();
+            initLoggerInfos(client.getInstrumentation(), loggerInfos);
+            loggerInfoResponse.setLoggerInfos(loggerInfos);
+            if (loggerInfos.isEmpty()) {
+                return createExceptionResponse("Can not find any logger info");
+            }
             return loggerInfoResponse;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("LoggerInfoCommand executeForResponse error, message:{}", e.getMessage(), e);
             return createExceptionResponse("The command execution failed. If the JDK version is greater than 9, please check whether --add-opens java.base/java.lang=ALL-UNNAMED is enabled.");
         }
@@ -88,7 +88,7 @@ public class LoggerInfoCommand extends AbstractLoggerCommand {
             LoggerTypes loggerTypes = entry.getValue();
 
             if (loggerTypes.contains(LoggerType.LOG4J)) {
-                Map<String, Map<String, Object>> loggerInfoMap =loggerInfo(classLoader, Log4jHelper.class);
+                Map<String, Map<String, Object>> loggerInfoMap = loggerInfo(classLoader, Log4jHelper.class);
                 loggerInfos.addAll(resetLoggerInfoWithClassLoader(loggerInfoMap, LoggerType.LOG4J));
             }
 
@@ -103,6 +103,7 @@ public class LoggerInfoCommand extends AbstractLoggerCommand {
             }
         }
     }
+
     private Map<String, Map<String, Object>> loggerInfo(ClassLoader classLoader, Class<?> helperClass) throws Exception {
         Map<String, Map<String, Object>> loggers = Collections.emptyMap();
         try {

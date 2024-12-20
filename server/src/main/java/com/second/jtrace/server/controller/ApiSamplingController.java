@@ -1,10 +1,6 @@
 package com.second.jtrace.server.controller;
 
 
-import com.second.jtrace.core.command.logger.LoggerInfoCommand;
-import com.second.jtrace.core.command.logger.LoggerLevelCommand;
-import com.second.jtrace.core.command.logger.response.LoggerInfoResponse;
-import com.second.jtrace.core.command.logger.response.LoggerLevelResponse;
 import com.second.jtrace.core.command.sampling.DisableSamplingCommand;
 import com.second.jtrace.core.command.sampling.EnableSamplingCommand;
 import com.second.jtrace.core.command.sampling.SamplingInfoCommand;
@@ -32,7 +28,7 @@ public class ApiSamplingController {
 
     @RequestMapping("info")
     public Result detail(@RequestParam String clientId) {
-        if(!influxDBConfiguration.isEnabled()){
+        if (!influxDBConfiguration.isEnabled()) {
             return Result.fail("influxDB is not enable");
         }
         SamplingInfoResponse response = CommandUtil.dealCommand(server, clientId, new SamplingInfoCommand());
@@ -44,7 +40,7 @@ public class ApiSamplingController {
 
     @RequestMapping("enable")
     public Result enable(@RequestParam String clientId, @RequestBody EnableSamplingCommand command) {
-        if(!influxDBConfiguration.isEnabled()){
+        if (!influxDBConfiguration.isEnabled()) {
             return Result.fail("influxDB is not enable");
         }
         SamplingResponse response = CommandUtil.dealCommand(server, clientId, command);
@@ -56,7 +52,7 @@ public class ApiSamplingController {
 
     @RequestMapping("disable")
     public Result disable(@RequestParam String clientId, @RequestBody DisableSamplingCommand command) {
-        if(!influxDBConfiguration.isEnabled()){
+        if (!influxDBConfiguration.isEnabled()) {
             return Result.fail("influxDB is not enable");
         }
         SamplingResponse response = CommandUtil.dealCommand(server, clientId, command);

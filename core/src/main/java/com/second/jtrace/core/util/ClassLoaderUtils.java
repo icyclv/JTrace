@@ -12,12 +12,11 @@ import java.net.URLClassLoader;
 import java.util.*;
 
 /**
- *
  * @author hengyunabc 2019-02-05
- *
  */
 public class ClassLoaderUtils {
     private static Logger logger = LoggerFactory.getLogger(ClassLoaderUtils.class);
+
     public static Set<ClassLoader> getAllClassLoader(Instrumentation inst) {
         Set<ClassLoader> classLoaderSet = new HashSet<ClassLoader>();
 
@@ -49,6 +48,7 @@ public class ClassLoaderUtils {
 
     /**
      * 通过类名查找classloader
+     *
      * @param inst
      * @param classLoaderClassName
      * @return
@@ -85,6 +85,7 @@ public class ClassLoaderUtils {
 
     /**
      * Find List<ClassLoader> by the class name of ClassLoader or the return value of ClassLoader#toString().
+     *
      * @param inst
      * @param classLoaderClassName
      * @param classLoaderToString
@@ -127,7 +128,7 @@ public class ClassLoaderUtils {
         return matchClassLoaders;
     }
 
-    @SuppressWarnings({ "unchecked", "restriction" })
+    @SuppressWarnings({"unchecked", "restriction"})
     public static URL[] getUrls(ClassLoader classLoader) {
         if (classLoader instanceof URLClassLoader) {
             try {
@@ -182,7 +183,6 @@ public class ClassLoaderUtils {
         }
         return null;
     }
-
 
 
     /**

@@ -19,22 +19,21 @@ import java.util.concurrent.TimeoutException;
 public class JTraceClientHandler extends SimpleChannelInboundHandler<IMessage> {
 
 
-
     private static final Logger logger = LoggerFactory.getLogger(JTraceClientHandler.class);
     private JTraceClient client;
 
     public JTraceClientHandler(JTraceClient client) {
-       this.client = client;
+        this.client = client;
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, IMessage message) throws Exception {
         try {
-            if(message instanceof ICommand){
+            if (message instanceof ICommand) {
                 ICommand command = (ICommand) message;
                 Future<Boolean> future = client.submit(new CommandTask(command, client));
-                try{
-                    if(future.get(JTraceConstants.TIME_OUT, TimeUnit.SECONDS)){
+                try {
+                    if (future.get(JTraceConstants.TIME_OUT, TimeUnit.SECONDS)) {
                         logger.info("Command {} executed successfully", command.getCommandId());
                     }
                 } catch (InterruptedException e) {
@@ -44,10 +43,9 @@ public class JTraceClientHandler extends SimpleChannelInboundHandler<IMessage> {
                 } catch (TimeoutException e) {
                     logger.error("Command {} execution timed out", command.getCommandId());
                 }
-            }else if(message instanceof ShutdownMessage){
+            } else if (message instanceof ShutdownMessage) {
                 logger.info("Shutdown command received, shutting down client");
                 ((ShutdownMessage) message).execute(client);
-
 
 
             }

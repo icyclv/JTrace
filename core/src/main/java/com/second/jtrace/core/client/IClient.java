@@ -17,6 +17,7 @@ public interface IClient {
     String getClientId();
 
     void setClientId(String clientId);
+
     String getClientName();
 
     void write(ICommand command, IResponse response);
@@ -25,8 +26,10 @@ public interface IClient {
 
     void destroy();
 
-    boolean enableSampling(String profilerName,int sampleInterval, int reportInterval);
+    boolean enableSampling(String profilerName, int sampleInterval, int reportInterval);
+
     boolean disableSampling(String profilerName);
+
     ConcurrentHashMap<String, Profiler> getProfilers();
 
     EnhancerAffect reset() throws UnmodifiableClassException;

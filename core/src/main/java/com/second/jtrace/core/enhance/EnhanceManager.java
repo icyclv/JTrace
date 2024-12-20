@@ -154,7 +154,7 @@ public class EnhanceManager {
     /**
      * 重置所以的Class
      *
-     * @param inst             inst
+     * @param inst inst
      * @return 增强影响范围
      */
     public static synchronized EnhancerAffect reset(final Instrumentation inst) throws UnmodifiableClassException {
@@ -176,8 +176,6 @@ public class EnhanceManager {
     }
 
 
-
-
     private static void enhance(Instrumentation inst, Set<Class<?>> classes)
             throws UnmodifiableClassException {
         int size = classes.size();
@@ -192,7 +190,7 @@ public class EnhanceManager {
         watchTransformers.clear();
         traceTransformers.clear();
 
-        if(classFileTransformer != null){
+        if (classFileTransformer != null) {
             inst.removeTransformer(classFileTransformer);
         }
 

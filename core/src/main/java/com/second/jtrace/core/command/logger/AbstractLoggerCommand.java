@@ -53,6 +53,28 @@ public abstract class AbstractLoggerCommand extends AbstractCommand {
         }
     }
 
+    static Class<?> helperClassNameWithClassLoader(ClassLoader classLoader, Class<?> helperClass) throws Exception {
+        String classLoaderHash = ClassLoaderUtils.classLoaderHash(classLoader);
+        String className = helperClass.getName();
+        // if want to debug, change to return className
+        String helperClassName = className + jtraceClassLoaderHash + classLoaderHash;
+
+        try {
+            return classLoader.loadClass(helperClassName);
+        } catch (ClassNotFoundException e) {
+            try {
+                byte[] helperClassBytes = AsmRenameUtil.renameClass(classToBytesMap.get(helperClass),
+                        helperClass.getName(), helperClassName);
+                return ReflectUtils.defineClass(helperClassName, helperClassBytes, classLoader);
+            } catch (Throwable e1) {
+                logger.error("loggger command try to define helper class error: " + helperClassName,
+                        e1);
+                throw new Exception(e1);
+            }
+        }
+
+    }
+
     void updateLoggerType(LoggerTypes loggerTypes, ClassLoader classLoader, String className) {
         if ("org.apache.log4j.Logger".equals(className)) {
             // 判断 org.apache.log4j.AsyncAppender 是否存在，如果存在则是 log4j，不是slf4j-over-log4j
@@ -80,27 +102,6 @@ public abstract class AbstractLoggerCommand extends AbstractCommand {
                 // ignore
             }
         }
-    }
-    static Class<?> helperClassNameWithClassLoader(ClassLoader classLoader, Class<?> helperClass) throws Exception {
-        String classLoaderHash = ClassLoaderUtils.classLoaderHash(classLoader);
-        String className = helperClass.getName();
-        // if want to debug, change to return className
-        String helperClassName = className + jtraceClassLoaderHash + classLoaderHash;
-
-        try {
-            return classLoader.loadClass(helperClassName);
-        } catch (ClassNotFoundException e) {
-            try {
-                byte[] helperClassBytes = AsmRenameUtil.renameClass(classToBytesMap.get(helperClass),
-                        helperClass.getName(), helperClassName);
-                return ReflectUtils.defineClass(helperClassName, helperClassBytes, classLoader);
-            } catch (Throwable e1) {
-                logger.error("loggger command try to define helper class error: " + helperClassName,
-                        e1);
-                throw new Exception(e1);
-            }
-        }
-
     }
 
     public static enum LoggerType {

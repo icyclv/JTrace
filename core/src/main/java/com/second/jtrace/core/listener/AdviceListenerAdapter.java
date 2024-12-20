@@ -12,17 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author hengyunabc 2020-05-20
- *
  */
 public abstract class AdviceListenerAdapter implements AdviceListener {
     private static final Logger logger = LoggerFactory.getLogger(AdviceListenerAdapter.class);
-
+    protected final ThreadLocalWatch threadLocalWatch = new ThreadLocalWatch();
     protected IClient client;
     protected EnhancerTransformer enhancerTransformer;
     protected EnhanceCommand enhanceCommand;
-    protected final ThreadLocalWatch threadLocalWatch = new ThreadLocalWatch();
 
     public AdviceListenerAdapter(IClient client, EnhanceCommand enhanceCommand) {
         this.client = client;

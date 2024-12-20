@@ -15,8 +15,8 @@ import java.util.Map;
  * ThreadInfoProfiler is used to Collects the Thread Related Metrics.
  */
 public class ThreadInfoProfiler implements Profiler {
-    private final static Logger logger = LoggerFactory.getLogger(ThreadInfoProfiler.class);
     public final static String PROFILER_NAME = "ThreadInfo";
+    private final static Logger logger = LoggerFactory.getLogger(ThreadInfoProfiler.class);
     private long intervalMillis = JTraceConstants.DEFAULT_METRIC_INTERVAL;
 
     private ThreadMXBean threadMXBean;
@@ -25,6 +25,7 @@ public class ThreadInfoProfiler implements Profiler {
     private Reporter reporter;
 
     private boolean available;
+
     public ThreadInfoProfiler(Reporter reporter) {
         setReporter(reporter);
         init();
@@ -34,21 +35,20 @@ public class ThreadInfoProfiler implements Profiler {
         try {
             this.threadMXBean = ManagementFactory.getThreadMXBean();
             this.available = true;
-        }
-        catch (Throwable ex) {
+        } catch (Throwable ex) {
             logger.warn("Failed to get Thread MXBean", ex);
             this.available = false;
         }
 
     }
 
-    public void setIntervalMillis(long intervalMillis) {
-        this.intervalMillis = intervalMillis;
-    }
-
     @Override
     public long getIntervalMillis() {
         return intervalMillis;
+    }
+
+    public void setIntervalMillis(long intervalMillis) {
+        this.intervalMillis = intervalMillis;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ThreadInfoProfiler implements Profiler {
         long newThreadCount = 0; // Number of new thread created since last time time the metrics was created.
         // This is a Derived metrics from previous data point.
         if (threadMXBean != null) {
-            liveThreadCount =  threadMXBean.getThreadCount();
+            liveThreadCount = threadMXBean.getThreadCount();
             peakThreadCount = threadMXBean.getPeakThreadCount();
             totalStartedThreadCount = threadMXBean.getTotalStartedThreadCount();
             newThreadCount = totalStartedThreadCount - this.previousTotalStartedThreadCount;
@@ -78,7 +78,6 @@ public class ThreadInfoProfiler implements Profiler {
         Map<String, Object> map = new HashMap<>();
 
         map.put("epochMillis", System.currentTimeMillis());
-
 
 
         map.put("totalStartedThreadCount", totalStartedThreadCount);

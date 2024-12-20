@@ -15,27 +15,27 @@ public class EnableSamplingCommand extends AbstractCommand {
 
     @Override
     public IResponse executeForResponse(IClient client) {
-        if(profilerName == null) {
+        if (profilerName == null) {
             return SamplingResponse.fail("profilerName cannot be null", getResponseClass());
         }
-        if(profilerName.equals("IO") && IOProfiler.available==false) {
+        if (profilerName.equals("IO") && IOProfiler.available == false) {
             return SamplingResponse.fail("IO profiler is only available on Linux platform", getResponseClass());
         }
-        if(reportInterval == null) {
+        if (reportInterval == null) {
             return SamplingResponse.fail("reportInterval cannot be null", getResponseClass());
         }
-        if("Stacktrace".equals(profilerName)   && samplingInterval == null) {
+        if ("Stacktrace".equals(profilerName) && samplingInterval == null) {
             return SamplingResponse.fail("samplingInterval cannot be null", getResponseClass());
         }
-        if(reportInterval < 1000 || (samplingInterval != null && samplingInterval < 100)) {
+        if (reportInterval < 1000 || (samplingInterval != null && samplingInterval < 100)) {
             return SamplingResponse.fail("interval must be greater than 100", getResponseClass());
         }
 
-        boolean result = client.enableSampling(profilerName,samplingInterval == null ? 0 : samplingInterval , reportInterval);
+        boolean result = client.enableSampling(profilerName, samplingInterval == null ? 0 : samplingInterval, reportInterval);
         SamplingResponse response = new SamplingResponse();
         response.setMsg(result ? "success" : "fail to enable sampling");
         response.setStatus(result ? 0 : -1);
-        return  response;
+        return response;
     }
 
     @Override

@@ -15,20 +15,20 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("api/user")
 public class UserController {
 
-        //Post请求
-        @PostMapping("login")
-        public Result login(@RequestBody LoginRequest loginRequest, HttpSession session) {
-            System.out.println("loginRequest: " + loginRequest);
-            // TODO: check username and password
-            UserDTO user = new UserDTO();
-            user.setUsername(loginRequest.getUsername());
-            user.setSessionId(StringUtils.UUID(true));
-            session.setAttribute("user", user);
-            return  Result.ok(user);
-        }
+    //Post请求
+    @PostMapping("login")
+    public Result login(@RequestBody LoginRequest loginRequest, HttpSession session) {
+        System.out.println("loginRequest: " + loginRequest);
+        // TODO: check username and password
+        UserDTO user = new UserDTO();
+        user.setUsername(loginRequest.getUsername());
+        user.setSessionId(StringUtils.UUID(true));
+        session.setAttribute("user", user);
+        return Result.ok(user);
+    }
 
-        @RequestMapping("logout")
-        public String logout() {
-            return "logout success";
-        }
+    @RequestMapping("logout")
+    public String logout() {
+        return "logout success";
+    }
 }

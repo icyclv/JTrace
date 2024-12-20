@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-aside width="50%" style="text-align: left;overflow-x: hidden">
+    <el-aside style="text-align: left;overflow-x: hidden" width="50%">
       <el-form ref="form" :model="methodInfo" label-width="150px">
         <el-form-item label="类型">
           <el-radio-group v-model="methodInfo.enhanceType">
@@ -20,15 +20,15 @@
           </el-select>
         </el-form-item>
         <el-form-item label="类名">
-          <el-autocomplete class="inline-input" v-model="methodInfo.className" style="width: 100%;"
-                           :fetch-suggestions="querySearchKeyForClassName" clearable
-                           placeholder="请输入类名">
+          <el-autocomplete v-model="methodInfo.className" :fetch-suggestions="querySearchKeyForClassName" class="inline-input"
+                           clearable placeholder="请输入类名"
+                           style="width: 100%;">
           </el-autocomplete>
         </el-form-item>
         <el-form-item label="方法名">
-          <el-autocomplete class="inline-input" v-model="methodInfo.methodName" style="width: 100%;"
-                           :fetch-suggestions="querySearchKeyForMethodName" clearable
-                           placeholder="请输入方法名">
+          <el-autocomplete v-model="methodInfo.methodName" :fetch-suggestions="querySearchKeyForMethodName" class="inline-input"
+                           clearable placeholder="请输入方法名"
+                           style="width: 100%;">
           </el-autocomplete>
         </el-form-item>
         <el-form-item label="类加载器Hash">
@@ -67,7 +67,7 @@
         <el-form-item label="是否JSON格式">
           <el-switch v-model="watchCommand.showWithJson" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </el-form-item>
-        <el-form-item label="Object展开层次" v-if="!watchCommand.showWithJson">
+        <el-form-item v-if="!watchCommand.showWithJson" label="Object展开层次">
           <el-input v-model="watchCommand.expand" placeholder="请输入展开层次（1~4）"></el-input>
         </el-form-item>
         <el-form-item label="执行前是否通知">
@@ -90,13 +90,13 @@
 
     <el-container>
       <el-header style="height: 30px;text-align: left">
-        <el-button @click="createEnhance" type="primary">创建监测</el-button>
-        <el-button @click="closeAllEnhance" type="danger">关闭所有监测</el-button>
-        <el-button @click="showMethodSourceCode" type="info">查看源码</el-button>
+        <el-button type="primary" @click="createEnhance">创建监测</el-button>
+        <el-button type="danger" @click="closeAllEnhance">关闭所有监测</el-button>
+        <el-button type="info" @click="showMethodSourceCode">查看源码</el-button>
       </el-header>
       <el-main>
         <el-tabs v-model="activeSession" closable @tab-remove="removeTab">
-          <el-tab-pane v-for="(value,key)  in sessionTabs" :label="value" :name="key" :key="key" >
+          <el-tab-pane v-for="(value,key)  in sessionTabs" :key="key" :label="value" :name="key">
             <div style="margin-right: 10px;text-align: left;background-color: #f0f0f0;border: 1px solid #dcdfe6;">
               <div style="width: 100%;background-color: #c8d9db;padding: 5px;line-height: 20px">
                 <span>
@@ -104,45 +104,45 @@
                     sessionCommands[key].methodName
                   }}#{{ sessionCommands[key].classLoaderHash }}
                 </span>
-                <span style="margin-left: 10px"
-                      v-if="sessionCommands[key].conditionExpress">{{ sessionCommands[key].conditionExpress }}</span>
+                <span v-if="sessionCommands[key].conditionExpress"
+                      style="margin-left: 10px">{{ sessionCommands[key].conditionExpress }}</span>
                 <span style="margin-left: 10px">执行次数：{{ sessionCommands[key].numberOfLimit }}</span>
-                <span style="margin-left: 10px" v-if="sessionCommands[key].type=='watch'">
+                <span v-if="sessionCommands[key].type=='watch'" style="margin-left: 10px">
                     是否JSON格式：{{ sessionCommands[key].showWithJson }}
                   </span>
-                <span style="margin-left: 10px" v-if="sessionCommands[key].expand">
+                <span v-if="sessionCommands[key].expand" style="margin-left: 10px">
                     Object展开层次：{{ sessionCommands[key].expand }}
                   </span>
-                <span style="margin-left: 10px" v-if="sessionCommands[key].type=='watch'">
+                <span v-if="sessionCommands[key].type=='watch'" style="margin-left: 10px">
                     执行前是否通知：{{ sessionCommands[key].atBefore }}
                   </span>
-                <span style="margin-left: 10px" v-if="sessionCommands[key].type=='watch'">
+                <span v-if="sessionCommands[key].type=='watch'" style="margin-left: 10px">
                     是否展示执行实例：{{ sessionCommands[key].showTarget }}
                   </span>
-                <span style="margin-left: 10px" v-if="sessionCommands[key].type=='watch'">
+                <span v-if="sessionCommands[key].type=='watch'" style="margin-left: 10px">
                     是否展示参数：{{ sessionCommands[key].showParams }}
                   </span>
-                <span style="margin-left: 10px" v-if="sessionCommands[key].type=='watch'">
+                <span v-if="sessionCommands[key].type=='watch'" style="margin-left: 10px">
                     是否展示返回结果：{{ sessionCommands[key].showReturnObj }}
                   </span>
-                <span style="margin-left: 10px" v-if="sessionCommands[key].type=='watch'">
+                <span v-if="sessionCommands[key].type=='watch'" style="margin-left: 10px">
                     是否展示异常：{{ sessionCommands[key].showException }}
                   </span>
-                <span style="margin-left: 10px" v-if="sessionCommands[key].type!='watch'">
+                <span v-if="sessionCommands[key].type!='watch'" style="margin-left: 10px">
                     是否忽略JDK方法：{{ sessionCommands[key].skipJDKTrace }}
                   </span>
               </div>
-              <div style="width: 100%;overflow-y: scroll;" :style="{height:dynamicHeight+'px'}">
+              <div :style="{height:dynamicHeight+'px'}" style="width: 100%;overflow-y: scroll;">
                 <div v-if="sessionCommands[key].type=='watch' && sessionResponses[key]">
-                  <WatchList :watch-infos="sessionResponses[key]" :session-command="sessionCommands[key]">
+                  <WatchList :session-command="sessionCommands[key]" :watch-infos="sessionResponses[key]">
                   </WatchList>
                 </div>
                 <div v-if="sessionCommands[key].type=='stack' && sessionResponses[key]">
-                  <StackList :stack-infos="sessionResponses[key]" :session-command="sessionCommands[key]">
+                  <StackList :session-command="sessionCommands[key]" :stack-infos="sessionResponses[key]">
                   </StackList>
                 </div>
                 <div v-if="sessionCommands[key].type=='trace' && sessionResponses[key]">
-                  <TraceList :trace-infos="sessionResponses[key]" :session-command="sessionCommands[key]"></TraceList>
+                  <TraceList :session-command="sessionCommands[key]" :trace-infos="sessionResponses[key]"></TraceList>
                 </div>
               </div>
             </div>
@@ -150,13 +150,13 @@
         </el-tabs>
       </el-main>
     </el-container>
-    <el-dialog title="源码" :visible.sync="dialogSourceCodeVisible" :fullscreen="true" :modal="false">
+    <el-dialog :fullscreen="true" :modal="false" :visible.sync="dialogSourceCodeVisible" title="源码">
       <MonacoEditor
-          language="java"
-          :height="dynamicHeight+120"
           :key="randomKey"
           :code="code"
-          :editorOptions="options" style="text-align: left">
+          :editorOptions="options"
+          :height="dynamicHeight+120"
+          language="java" style="text-align: left">
       </MonacoEditor>
     </el-dialog>
   </el-container>
@@ -233,27 +233,27 @@ export default {
   },
   created() {
     Vue.axios.get('/api/client/list', {}).then((response) => {
-      if(response.data.success){
+      if (response.data.success) {
         let clientInfos = response.data.data;
-      let clientId = this.clientIds[0];
-      let clientName = '';
-      for (let index in clientInfos) {
-        if (clientInfos[index].clientId == clientId) {
-          clientName = clientInfos[index].clientName;
-          break;
+        let clientId = this.clientIds[0];
+        let clientName = '';
+        for (let index in clientInfos) {
+          if (clientInfos[index].clientId == clientId) {
+            clientName = clientInfos[index].clientName;
+            break;
+          }
         }
-      }
-      let tempClientInfos = [];
-      for (let index in clientInfos) {
-        if (clientInfos[index].clientName == clientName) {
-          tempClientInfos.push(clientInfos[index]);
+        let tempClientInfos = [];
+        for (let index in clientInfos) {
+          if (clientInfos[index].clientName == clientName) {
+            tempClientInfos.push(clientInfos[index]);
+          }
         }
-      }
-      this.clientInfos = tempClientInfos;
-      }else{
+        this.clientInfos = tempClientInfos;
+      } else {
         this.$message.error(response.data.errorMsg);
       }
-    
+
     });
   },
   methods: {
@@ -264,14 +264,14 @@ export default {
             , "classLoaderHash": this.methodInfo.classLoaderHash
             , "methodName": this.methodInfo.methodName
           }).then((response) => {
-            if(response.data.success){
-              this.randomKey = Math.floor(Math.random() * 100000);
-            this.code = response.data.data.sourceInfo.source;
-            this.dialogSourceCodeVisible = true;
-            }else{
-              this.$message.error(response.data.errorMsg);
-            }
-       
+        if (response.data.success) {
+          this.randomKey = Math.floor(Math.random() * 100000);
+          this.code = response.data.data.sourceInfo.source;
+          this.dialogSourceCodeVisible = true;
+        } else {
+          this.$message.error(response.data.errorMsg);
+        }
+
       });
     },
     removeTab: function (sessionId) {
@@ -348,12 +348,12 @@ export default {
           url = '/api/enhance/watch?clientId=' + this.clientIds[idx];
         }
         Vue.axios.post(url, command).then((response) => {
-          if(response.data.success){
+          if (response.data.success) {
             let enhanceInfo = response.data.data.enhanceInfo;
             this.$message("cost:" + enhanceInfo.cost + "ms ,enhance classes:"
-            + enhanceInfo.classCnt + " ,enhance methods:" + enhanceInfo.methodCnt + ".")
+                + enhanceInfo.classCnt + " ,enhance methods:" + enhanceInfo.methodCnt + ".")
           }
-         
+
         });
       }
     },
@@ -428,7 +428,7 @@ export default {
         websocket.onmessage = evt => {
           console.log("websocket返回的数据：", evt);
           let obj = JSON.parse(evt.data);
-          console.log("obj",obj);
+          console.log("obj", obj);
           if (obj.stackInfo) {
             let stackInfo = obj.stackInfo;
             stackInfo.clientId = obj.clientId;
@@ -455,7 +455,7 @@ export default {
             }
             this.sessionResponses[sessionId].push(watchInfo);
             this.sessionResponses = JSON.parse(JSON.stringify(this.sessionResponses));
-            console.log("1watchInfo",this.sessionResponses);
+            console.log("1watchInfo", this.sessionResponses);
           }
         };
         // 发生错误时

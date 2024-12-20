@@ -18,11 +18,11 @@ public class AgentBootstrap {
     public static void main(String[] args) {
         Map<String, String> defaultValues = new HashMap<>();
         defaultValues.put("serverIP", "127.0.0.1");
-        defaultValues.put("serverPort","4090");
+        defaultValues.put("serverPort", "4090");
         defaultValues.put("clientName", "default-agent");
 
-        defaultValues.put("agentJar", JTraceConstants.LIB_DIR+File.separator+AGENT_JAR);
-        defaultValues.put("clientJar", JTraceConstants.LIB_DIR+ File.separator + CLIENT_JAR);
+        defaultValues.put("agentJar", JTraceConstants.LIB_DIR + File.separator + AGENT_JAR);
+        defaultValues.put("clientJar", JTraceConstants.LIB_DIR + File.separator + CLIENT_JAR);
 
         Map<String, String> config = new HashMap<>(defaultValues);
         BootUtils.parseConfig(args, config);

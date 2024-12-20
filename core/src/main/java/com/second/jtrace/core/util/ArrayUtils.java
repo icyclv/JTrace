@@ -15,7 +15,7 @@ public class ArrayUtils {
      *
      * <p>This method returns {@code null} for a {@code null} input array.</p>
      *
-     * @param array  a {@code Long} array, may be {@code null}
+     * @param array a {@code Long} array, may be {@code null}
      * @return a {@code long} array, {@code null} if null array input
      * @throws NullPointerException if array content is {@code null}
      */
@@ -33,7 +33,7 @@ public class ArrayUtils {
     }
 
     public static boolean isInArray(long[] array, long value) {
-        if(array == null) {
+        if (array == null) {
             return false;
         }
         for (long l : array) {

@@ -1,20 +1,15 @@
 package com.second.jtrace.core.util;
 
-import com.alibaba.deps.org.objectweb.asm.Type;
 import com.second.jtrace.common.JTraceConstants;
 
 import java.lang.annotation.Annotation;
 import java.lang.instrument.Instrumentation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.security.CodeSource;
 import java.util.*;
 
 /**
- *
  * @author hengyunabc 2018-10-18
- *
  */
 public class ClassUtils {
 
@@ -93,7 +88,7 @@ public class ClassUtils {
     }
 
     public static String classLoaderHash(ClassLoader classLoader) {
-        if (classLoader == null ) {
+        if (classLoader == null) {
             return "null";
         }
         return Integer.toHexString(classLoader.hashCode());

@@ -3,9 +3,8 @@ package com.second.jtrace.spy;
 
 public class SpyAPI {
     public static final AbstractSpy NOPSPY = new NopSpy();
-    private static volatile AbstractSpy spyInstance = NOPSPY;
-
     public static volatile boolean INITED;
+    private static volatile AbstractSpy spyInstance = NOPSPY;
 
     public static AbstractSpy getSpy() {
         return spyInstance;

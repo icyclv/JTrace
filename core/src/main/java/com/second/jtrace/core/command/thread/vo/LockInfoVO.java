@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class LockInfoVO {
     private String className;
-    private int    identityHashCode;
+    private int identityHashCode;
 }

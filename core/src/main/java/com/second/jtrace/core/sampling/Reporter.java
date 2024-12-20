@@ -19,10 +19,10 @@ public class Reporter {
         this.processId = SystemInfoUtil.PROCESS_ID;
     }
 
-    public void report(String profilerName,Map<String,Object> result) {
+    public void report(String profilerName, Map<String, Object> result) {
 
         result.put("clientName", client.getClientName());
-        result.put("clientId",  client.getClientId());
+        result.put("clientId", client.getClientId());
         result.put("hostName", hostName);
         result.put("ip", ip);
         result.put("processId", processId);

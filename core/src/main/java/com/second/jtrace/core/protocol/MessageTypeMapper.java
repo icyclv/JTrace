@@ -1,12 +1,5 @@
 package com.second.jtrace.core.protocol;
 
-import com.second.jtrace.core.command.sampling.DisableSamplingCommand;
-import com.second.jtrace.core.command.sampling.EnableSamplingCommand;
-import com.second.jtrace.core.command.sampling.SamplingInfoCommand;
-import com.second.jtrace.core.command.sampling.response.SamplingInfoResponse;
-import com.second.jtrace.core.command.sampling.response.SamplingResponse;
-import com.second.jtrace.core.command.shutdown.ShutdownMessage;
-import com.second.jtrace.core.command.shutdown.ShutdownResponse;
 import com.second.jtrace.core.command.clazz.ClassCommand;
 import com.second.jtrace.core.command.clazz.ClassLoaderCommand;
 import com.second.jtrace.core.command.clazz.JadCommand;
@@ -30,6 +23,12 @@ import com.second.jtrace.core.command.logger.response.LoggerInfoResponse;
 import com.second.jtrace.core.command.logger.response.LoggerLevelResponse;
 import com.second.jtrace.core.command.ognl.OgnlCommand;
 import com.second.jtrace.core.command.ognl.response.OgnlResponse;
+import com.second.jtrace.core.command.sampling.DisableSamplingCommand;
+import com.second.jtrace.core.command.sampling.EnableSamplingCommand;
+import com.second.jtrace.core.command.sampling.SamplingInfoCommand;
+import com.second.jtrace.core.command.sampling.response.SamplingInfoResponse;
+import com.second.jtrace.core.command.sampling.response.SamplingResponse;
+import com.second.jtrace.core.command.shutdown.ShutdownMessage;
 import com.second.jtrace.core.command.thread.ThreadAllCommand;
 import com.second.jtrace.core.command.thread.response.ThreadAllResponse;
 import com.second.jtrace.core.command.vmtool.VMToolCommand;
@@ -41,76 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MessageTypeMapper {
-    private static final Map<Integer,Class<? extends IMessage>> typeMapper = new HashMap<>();
-
-    public enum TypeList{
-        BaseResponse,
-        HeapDumpCommand,
-        HeapDumpResponse,
-        JVMCommand,
-        JVMResponse,
-        MemoryCommand,
-        MemoryResponse,
-        SysEnvCommand,
-        SysEnvResponse,
-        SysPropCommand,
-        SysPropResponse,
-        VMOptionCommand,
-        VMOptionResponse,
-        ClientInfoCommand,
-        ClientInfoResponse,
-        ClassCommand,
-        ClassResponse,
-        ClassLoaderCommand,
-        ClassLoaderResponse,
-        JadCommand,
-        JadResponse,
-        MethodCommand,
-        MethodResponse,
-        ResetCommand,
-        ResetResponse,
-        StackCommand,
-        StackResponse,
-        TraceCommand,
-        TraceResponse,
-        WatchCommand,
-        WatchResponse,
-        BaseEnhanceResponse,
-        StackAsyncResponse,
-        TraceAsyncResponse,
-        WatchAsyncResponse,
-        LoggerInfoCommand,
-        LoggerInfoResponse,
-        LoggerLevelCommand,
-        LoggerLevelResponse,
-        OgnlCommand,
-        OgnlResponse,
-        ThreadAllCommand,
-        ThreadAllResponse,
-        VMToolCommand,
-        VMToolResponse,
-        ShutdownMessage,
-        SamplingMessage,
-        DisableSamplingCommand,
-        SamplingInfoCommand,
-        EnableSamplingCommand,
-        SamplingInfoResponse,
-        SamplingResponse,
-        PingMessage;
-
-
-
-        public static int getOrdinalByClassName(Object obj) {
-            try {
-                String className = obj.getClass().getSimpleName();
-
-                return TypeList.valueOf(className).ordinal();
-            } catch (IllegalArgumentException e) {
-                return -1; // 或者 throw new IllegalArgumentException("No matching enum for class: " + obj.getClass().getSimpleName());
-            }
-        }
-
-    }
+    private static final Map<Integer, Class<? extends IMessage>> typeMapper = new HashMap<>();
 
     static {
         typeMapper.put(TypeList.BaseResponse.ordinal(), BaseResponse.class);
@@ -174,7 +104,75 @@ public class MessageTypeMapper {
 
     }
 
-    public  static Class<? extends IMessage> getClass(int type){
+    public static Class<? extends IMessage> getClass(int type) {
         return typeMapper.get(type);
+    }
+
+    public enum TypeList {
+        BaseResponse,
+        HeapDumpCommand,
+        HeapDumpResponse,
+        JVMCommand,
+        JVMResponse,
+        MemoryCommand,
+        MemoryResponse,
+        SysEnvCommand,
+        SysEnvResponse,
+        SysPropCommand,
+        SysPropResponse,
+        VMOptionCommand,
+        VMOptionResponse,
+        ClientInfoCommand,
+        ClientInfoResponse,
+        ClassCommand,
+        ClassResponse,
+        ClassLoaderCommand,
+        ClassLoaderResponse,
+        JadCommand,
+        JadResponse,
+        MethodCommand,
+        MethodResponse,
+        ResetCommand,
+        ResetResponse,
+        StackCommand,
+        StackResponse,
+        TraceCommand,
+        TraceResponse,
+        WatchCommand,
+        WatchResponse,
+        BaseEnhanceResponse,
+        StackAsyncResponse,
+        TraceAsyncResponse,
+        WatchAsyncResponse,
+        LoggerInfoCommand,
+        LoggerInfoResponse,
+        LoggerLevelCommand,
+        LoggerLevelResponse,
+        OgnlCommand,
+        OgnlResponse,
+        ThreadAllCommand,
+        ThreadAllResponse,
+        VMToolCommand,
+        VMToolResponse,
+        ShutdownMessage,
+        SamplingMessage,
+        DisableSamplingCommand,
+        SamplingInfoCommand,
+        EnableSamplingCommand,
+        SamplingInfoResponse,
+        SamplingResponse,
+        PingMessage;
+
+
+        public static int getOrdinalByClassName(Object obj) {
+            try {
+                String className = obj.getClass().getSimpleName();
+
+                return TypeList.valueOf(className).ordinal();
+            } catch (IllegalArgumentException e) {
+                return -1; // 或者 throw new IllegalArgumentException("No matching enum for class: " + obj.getClass().getSimpleName());
+            }
+        }
+
     }
 }

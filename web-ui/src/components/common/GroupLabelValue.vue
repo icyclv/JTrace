@@ -1,10 +1,10 @@
 <template>
   <div v-if="groupObj!=null && Object.keys(groupObj).length!=0">
-    <el-table :data="processedTableData" border style="width: 100%" stripe>
-    <el-table-column prop="field" label="字段名" width="150"></el-table-column>
-    <el-table-column prop="value" label="值"></el-table-column>
-  </el-table>
-    
+    <el-table :data="processedTableData" border stripe style="width: 100%">
+      <el-table-column label="字段名" prop="field" width="150"></el-table-column>
+      <el-table-column label="值" prop="value"></el-table-column>
+    </el-table>
+
   </div>
 </template>
 <script>
@@ -44,21 +44,26 @@ export default {
   word-break: break-all;
   line-height: 14px;
 }
+
 .bg-purple-light {
-    background: #e5e9f2;
-  }
+  background: #e5e9f2;
+}
+
 .group-label {
   font-weight: bold;
   text-align: right;
   padding-right: 10px;
 }
+
 .grid-content {
-    border-radius: 4px;
-    min-height: 36px;
-  }
-  .bg-purple {
-    background: #d3dce6;
-  }
+  border-radius: 4px;
+  min-height: 36px;
+}
+
+.bg-purple {
+  background: #d3dce6;
+}
+
 .group-value {
   text-align: left;
   white-space: pre-wrap;

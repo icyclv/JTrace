@@ -27,7 +27,7 @@ public class ApiClassController {
     @RequestMapping("list")
     public Result list(@RequestParam String clientId, @RequestBody ClassCommand command) {
         ClassResponse classResponse = CommandUtil.dealCommand(server, clientId, command);
-        if(classResponse.getStatus()== BaseResponse.STATUS_FAIL){
+        if (classResponse.getStatus() == BaseResponse.STATUS_FAIL) {
             return Result.fail(classResponse.getMsg());
         }
         return Result.ok(classResponse);
@@ -37,7 +37,7 @@ public class ApiClassController {
     public Result jad(@RequestParam String clientId
             , @RequestBody JadCommand command) {
         JadResponse jadResponse = CommandUtil.dealCommand(server, clientId, command);
-        if(jadResponse.getStatus()== BaseResponse.STATUS_FAIL){
+        if (jadResponse.getStatus() == BaseResponse.STATUS_FAIL) {
             return Result.fail(jadResponse.getMsg());
         }
         return Result.ok(jadResponse);
@@ -46,7 +46,7 @@ public class ApiClassController {
     @RequestMapping("method")
     public Result method(@RequestParam String clientId, @RequestBody MethodCommand command) {
         MethodResponse response = CommandUtil.dealCommand(server, clientId, command);
-        if(response.getStatus()== BaseResponse.STATUS_FAIL){
+        if (response.getStatus() == BaseResponse.STATUS_FAIL) {
             return Result.fail(response.getMsg());
         }
         return Result.ok(response);

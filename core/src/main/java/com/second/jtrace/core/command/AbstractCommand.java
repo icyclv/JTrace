@@ -22,10 +22,10 @@ public abstract class AbstractCommand implements ICommand {
             if (response != null) {
                 client.write(this, response);
             } else {
-                logger.warn("response is null, command: {},{}", this.getClass().getSimpleName(),commandId);
+                logger.warn("response is null, command: {},{}", this.getClass().getSimpleName(), commandId);
             }
         } catch (Throwable ex) {
-            client.write(this, createExceptionResponse("Command error:" + ex.getMessage()+",commandId:"+commandId));
+            client.write(this, createExceptionResponse("Command error:" + ex.getMessage() + ",commandId:" + commandId));
         }
     }
 

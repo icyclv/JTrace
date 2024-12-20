@@ -6,9 +6,7 @@ import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import com.second.jtrace.core.protocol.GsonSerializer;
 import com.second.jtrace.core.sampling.bean.SamplingMessage;
-import com.second.jtrace.server.configuration.InfluxDBConfiguration;
 import io.micrometer.core.instrument.util.StringUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,6 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Repository
 public class InfluxDBDao {
@@ -27,7 +24,7 @@ public class InfluxDBDao {
 
 
     @Autowired
-    public InfluxDBDao(InfluxDBClient influxDBClient ) {
+    public InfluxDBDao(InfluxDBClient influxDBClient) {
         this.influxDBClient = influxDBClient;
 
 
@@ -43,10 +40,10 @@ public class InfluxDBDao {
             String profilerName = samplingMessage.getProfilerName();
             Map<String, Object> metrics = samplingMessage.getResult();
             Map<String, Object> formattedMetrics;
-            if(samplingMessage.getProfilerName().equals("Stacktrace")){
+            if (samplingMessage.getProfilerName().equals("Stacktrace")) {
                 // stacktrace直接保存字符串，用于后续生成火焰图等，不需要解析为数值类型
                 formattedMetrics = getJsonFormattedMetrics(metrics);
-            }else{
+            } else {
                 formattedMetrics = getFormattedMetrics(metrics);
             }
 
@@ -60,14 +57,14 @@ public class InfluxDBDao {
                     .addTag("clientId", (String) metrics.get("clientId"));
 
             writeApi.writePoint(point);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("Error while writing sampling data to InfluxDB", e);
         }
     }
 
-    private Map<String,Object> getJsonFormattedMetrics(Map<String,Object> metrics){
-        Map<String,Object> formattedMetrics = new HashMap<>();
-        for(Map.Entry<String,Object> entry: metrics.entrySet()) {
+    private Map<String, Object> getJsonFormattedMetrics(Map<String, Object> metrics) {
+        Map<String, Object> formattedMetrics = new HashMap<>();
+        for (Map.Entry<String, Object> entry : metrics.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
             if (value instanceof List || value instanceof Map) {
@@ -76,9 +73,10 @@ public class InfluxDBDao {
                 formattedMetrics.put(key, value);
             }
         }
-            return formattedMetrics;
+        return formattedMetrics;
 
     }
+
     private Map<String, Object> getFormattedMetrics(Map<String, Object> metrics) {
         Map<String, Object> formattedMetrics = new HashMap<>();
         for (Map.Entry<String, Object> entry : metrics.entrySet()) {
@@ -95,14 +93,14 @@ public class InfluxDBDao {
                     int num = 1;
                     for (Map<String, Object> metricMap : metricList) {
                         String name = null;
-                        if(metricMap.containsKey("name") && metricMap.get("name") != null && metricMap.get("name") instanceof String){
+                        if (metricMap.containsKey("name") && metricMap.get("name") != null && metricMap.get("name") instanceof String) {
                             name = (String) metricMap.get("name");
                             name = name.replaceAll("\\s", "");
                         }
                         for (Map.Entry<String, Object> entry1 : metricMap.entrySet()) {
-                            if(StringUtils.isNotEmpty(name)){
+                            if (StringUtils.isNotEmpty(name)) {
                                 formattedMetrics.put(key + "-" + name + "-" + entry1.getKey(), entry1.getValue());
-                            }else{
+                            } else {
                                 formattedMetrics.put(key + "-" + entry1.getKey() + "-" + num, entry1.getValue());
                             }
                         }

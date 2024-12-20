@@ -17,6 +17,7 @@ public class JTraceAgent {
     public static void resetClassLoader() {
         jtraceClassLoader = null;
     }
+
     public static void premain(String args, Instrumentation inst) {
         attach(args, inst);
     }
@@ -51,7 +52,7 @@ public class JTraceAgent {
             final ClassLoader agentLoader = getClassLoader(clientJarFile);
             Class<?> clientClass = agentLoader.loadClass(JTRACE_CLIENT);
             // new JTraceClient(inst,appName, ip, port);
-            clientClass.getConstructor(Instrumentation.class, String.class, String.class, int.class).newInstance(inst,appName, ip, Integer.parseInt(port) );
+            clientClass.getConstructor(Instrumentation.class, String.class, String.class, int.class).newInstance(inst, appName, ip, Integer.parseInt(port));
 
 
         } catch (Exception ex) {

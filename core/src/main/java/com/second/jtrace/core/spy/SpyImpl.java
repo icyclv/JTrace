@@ -1,14 +1,14 @@
 package com.second.jtrace.core.spy;
 
 
+import com.second.jtrace.core.listener.AdviceListener;
 import com.second.jtrace.core.listener.AdviceListenerAdapter;
 import com.second.jtrace.core.listener.AdviceListenerManager;
-import com.second.jtrace.core.listener.AdviceListener;
 import com.second.jtrace.core.listener.InvokeTraceable;
 import com.second.jtrace.core.util.StringUtils;
+import com.second.jtrace.spy.SpyAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.second.jtrace.spy.SpyAPI;
 
 import java.util.List;
 
@@ -16,12 +16,11 @@ import java.util.List;
  * <pre>
  * 怎么从 className|methodDesc 到 id 对应起来？？
  * 当id少时，可以id自己来判断是否符合？
- * 
+ *
  * 如果是每个 className|methodDesc 为 key ，是否
  * </pre>
- * 
- * @author hengyunabc 2020-04-24
  *
+ * @author hengyunabc 2020-04-24
  */
 public class SpyImpl extends SpyAPI.AbstractSpy {
     private static final Logger logger = LoggerFactory.getLogger(SpyImpl.class);
@@ -161,7 +160,6 @@ public class SpyImpl extends SpyAPI.AbstractSpy {
             }
         }
     }
-
 
 
 }

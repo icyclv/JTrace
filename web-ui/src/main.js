@@ -15,28 +15,28 @@ Vue.config.productionTip = false;
 
 Vue.use(VueAxios, axiosWrap);
 Vue.use(ElementUI, {
-  size: 'small',
+    size: 'small',
 });
 
 const whiteList = [];
 router.beforeEach((to, from, next) => {
-  if (to.path === '/login') {
-    next();
-    return;
-  }
-  if (getSession()) {
-    next();
-  } else {
-    if (whiteList.indexOf(to.path) !== -1) {
-      next();
-    } else {
-      next('/#/login');
+    if (to.path === '/login') {
+        next();
+        return;
     }
-  }
+    if (getSession()) {
+        next();
+    } else {
+        if (whiteList.indexOf(to.path) !== -1) {
+            next();
+        } else {
+            next('/#/login');
+        }
+    }
 });
 
 new Vue({
-  router,
-  store,
-  render: (h) => h(App),
+    router,
+    store,
+    render: (h) => h(App),
 }).$mount('#app');

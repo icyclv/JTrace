@@ -1,7 +1,6 @@
 package arthas;
 
 import com.alibaba.bytekit.utils.IOUtils;
-
 import com.second.jtrace.common.JTraceConstants;
 import com.second.jtrace.common.OSUtils;
 import com.second.jtrace.core.util.FileUtils;

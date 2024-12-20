@@ -31,7 +31,6 @@ public class ResetCommand extends AbstractCommand {
     }
 
 
-
     @Override
     public Class<? extends IResponse> getResponseClass() {
         return ResetResponse.class;

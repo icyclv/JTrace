@@ -4,13 +4,13 @@ public class AbstractAsyncResponse extends BaseResponse implements IAsyncRespons
     protected String sessionId;
 
     @Override
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+    public String getSessionId() {
+        return this.sessionId;
     }
 
     @Override
-    public String getSessionId() {
-        return this.sessionId;
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
 

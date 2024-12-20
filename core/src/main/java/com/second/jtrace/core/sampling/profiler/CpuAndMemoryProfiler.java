@@ -27,7 +27,10 @@ import javax.management.AttributeList;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.management.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CpuAndMemoryProfiler implements Profiler {
     private static final String PROFILER_NAME = "CpuAndMemory";
@@ -49,6 +52,7 @@ public class CpuAndMemoryProfiler implements Profiler {
 
     private MemoryMXBean memoryMXBean;
     private Reporter reporter;
+
     public CpuAndMemoryProfiler(Reporter reporter) {
         setReporter(reporter);
         init();
@@ -61,16 +65,14 @@ public class CpuAndMemoryProfiler implements Profiler {
         return intervalMillis;
     }
 
-    @Override
-    public void setReporter(Reporter reporter) {
-        this.reporter = reporter;
-    }
-
-
     public void setIntervalMillis(long intervalMillis) {
         this.intervalMillis = intervalMillis;
     }
 
+    @Override
+    public void setReporter(Reporter reporter) {
+        this.reporter = reporter;
+    }
 
     @Override
     public synchronized void profile() {
@@ -103,24 +105,24 @@ public class CpuAndMemoryProfiler implements Profiler {
         Double nonHeapMemoryTotalUsed = null;
         Double nonHeapMemoryCommitted = null;
         Double nonHeapMemoryMax = null;
-        
+
         if (memoryMXBean != null) {
             MemoryUsage memoryUsage = memoryMXBean.getHeapMemoryUsage();
             heapMemoryTotalUsed = new Double(memoryUsage.getUsed());
             heapMemoryCommitted = new Double(memoryUsage.getCommitted());
-            heapMemoryMax =  new Double(memoryUsage.getMax());
+            heapMemoryMax = new Double(memoryUsage.getMax());
 
             memoryUsage = memoryMXBean.getNonHeapMemoryUsage();
             nonHeapMemoryTotalUsed = new Double(memoryUsage.getUsed());
             nonHeapMemoryCommitted = new Double(memoryUsage.getCommitted());
-            nonHeapMemoryMax =  new Double(memoryUsage.getMax());
+            nonHeapMemoryMax = new Double(memoryUsage.getMax());
 
         }
 
         List<Map<String, Object>> gcMetrics = new ArrayList<>();
 
         List<GarbageCollectorMXBean> gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
-        
+
         if (gcMXBeans != null) {
             for (GarbageCollectorMXBean gcMXBean : gcMXBeans) {
                 Map<String, Object> gcMap = new HashMap<>();
@@ -177,8 +179,6 @@ public class CpuAndMemoryProfiler implements Profiler {
         map.put("epochMillis", System.currentTimeMillis());
 
 
-
-
         map.put("processCpuLoad", processCpuLoad);
         map.put("systemCpuLoad", systemCpuLoad);
         map.put("processCpuTime", processCpuTime);
@@ -190,7 +190,7 @@ public class CpuAndMemoryProfiler implements Profiler {
         map.put("nonHeapMemoryTotalUsed", nonHeapMemoryTotalUsed);
         map.put("nonHeapMemoryCommitted", nonHeapMemoryCommitted);
         map.put("nonHeapMemoryMax", nonHeapMemoryMax);
-        
+
         map.put("gc", gcMetrics);
 
         map.put("memoryPools", memoryPoolsMetrics);
@@ -208,7 +208,7 @@ public class CpuAndMemoryProfiler implements Profiler {
         if (procStatusVmPeak != null) {
             map.put("vmPeak", procStatusVmPeak);
         }
-        this.reporter.report(PROFILER_NAME,map);
+        this.reporter.report(PROFILER_NAME, map);
     }
 
     private void init() {

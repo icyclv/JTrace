@@ -2,23 +2,23 @@
   <div>
     <el-row>
       <el-col style="text-align: left;">
-        <el-button @click="showMemoryInfos()" type="primary">刷新数据</el-button>
+        <el-button type="primary" @click="showMemoryInfos()">刷新数据</el-button>
       </el-col>
     </el-row>
-    <el-table :data="memoryInfos" :height="dynamicHeight" style="margin-top:10px;" border stripe>
-      <el-table-column prop="type" label="类型" width="150"></el-table-column>
-      <el-table-column prop="name" label="名称" width="200"></el-table-column>
-      <el-table-column prop="used" label="已使用">
+    <el-table :data="memoryInfos" :height="dynamicHeight" border stripe style="margin-top:10px;">
+      <el-table-column label="类型" prop="type" width="150"></el-table-column>
+      <el-table-column label="名称" prop="name" width="200"></el-table-column>
+      <el-table-column label="已使用" prop="used">
         <template slot-scope="scope">
           <span>{{ computeValue(scope.row.used) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="total" label="总大小">
+      <el-table-column label="总大小" prop="total">
         <template slot-scope="scope">
           <span>{{ computeValue(scope.row.total) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="max" label="最大">
+      <el-table-column label="最大" prop="max">
         <template slot-scope="scope">
           <span>{{ computeValue(scope.row.max) }}</span>
         </template>
@@ -49,11 +49,11 @@ export default {
     showMemoryInfos() {
       Vue.axios.post('/api/jvm/memory?clientId=' + this.clientId
           , {}).then((response) => {
-            if (response.data.success) {
-              this.memoryInfos = response.data.data.memoryInfos;
-            }else{
-              this.$message.error(response.data.errorMsg);
-            }
+        if (response.data.success) {
+          this.memoryInfos = response.data.data.memoryInfos;
+        } else {
+          this.$message.error(response.data.errorMsg);
+        }
       });
     },
     computeValue(value) {

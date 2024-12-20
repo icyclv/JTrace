@@ -8,37 +8,37 @@
         <el-main style="background: #f8f8f9;margin-top: 3px">
           <el-row>
             <el-col :span="4" style="text-align: left">
-              <el-button type="primary" round icon="el-icon-search" @click="initClientInfos">刷新数据</el-button>
+              <el-button icon="el-icon-search" round type="primary" @click="initClientInfos">刷新数据</el-button>
             </el-col>
             <el-col :span="20" style="text-align: right">
-              <el-autocomplete class="inline-input" v-model="clientSearchKey"
-                               :fetch-suggestions="querySearchKey" style="width: 400px"
-                               placeholder="请输入搜索关键词(客户端名称、ID、服务器名)">
+              <el-autocomplete v-model="clientSearchKey" :fetch-suggestions="querySearchKey"
+                               class="inline-input" placeholder="请输入搜索关键词(客户端名称、ID、服务器名)"
+                               style="width: 400px">
                 <el-button slot="append" icon="el-icon-search" @click="refreshPageClientInfos"></el-button>
               </el-autocomplete>
             </el-col>
           </el-row>
           <el-table :data="pageClientInfos" :height="dynamicHeight" stripe
                     style="width: 100%;margin-top: 20px; margin-bottom: 20px">
-            <el-table-column prop="clientName" label="客户端名称" min-width="20%"></el-table-column>
-            <el-table-column prop="clientId" label="客户端ID" min-width="25%"></el-table-column>
-            <el-table-column prop="host" label="主机名称" min-width="15%"></el-table-column>
-            <el-table-column prop="ip" label="IP" min-width="15%"></el-table-column>
-            <el-table-column prop="version" label="版本" min-width="10%"></el-table-column>
+            <el-table-column label="客户端名称" min-width="20%" prop="clientName"></el-table-column>
+            <el-table-column label="客户端ID" min-width="25%" prop="clientId"></el-table-column>
+            <el-table-column label="主机名称" min-width="15%" prop="host"></el-table-column>
+            <el-table-column label="IP" min-width="15%" prop="ip"></el-table-column>
+            <el-table-column label="版本" min-width="10%" prop="version"></el-table-column>
             <el-table-column fixed="right" label="操作" min-width="15%">
               <template slot-scope="scope">
-                <el-button @click="showClientDetail(scope.row)" type="text" size="small">查看详情</el-button>
-                <el-button @click="stopAgent(scope.row)" type="text" size="small" >关闭Agent</el-button>
+                <el-button size="small" type="text" @click="showClientDetail(scope.row)">查看详情</el-button>
+                <el-button size="small" type="text" @click="stopAgent(scope.row)">关闭Agent</el-button>
               </template>
             </el-table-column>
           </el-table>
-          <el-pagination @size-change="handleSizeChange"
-                         @current-change="handleCurrentChange"
-                         :current-page.sync="currentPage"
-                         :page-sizes="[10, 20, 30, 40]"
+          <el-pagination :current-page.sync="currentPage"
                          :page-size.sync="pageSize"
+                         :page-sizes="[10, 20, 30, 40]"
+                         :total="total"
                          layout="total, sizes, prev, pager, next, jumper"
-                         :total="total">
+                         @size-change="handleSizeChange"
+                         @current-change="handleCurrentChange">
           </el-pagination>
         </el-main>
       </el-container>
@@ -78,9 +78,9 @@ export default {
     },
     stopAgent(clientInfo) {
       Vue.axios.post('/api/client/shutdown?clientId=' + clientInfo.clientId, {}).then((response) => {
-        if(response.data.success){
+        if (response.data.success) {
           this.$message.success(response.data.data.message);
-        }else{
+        } else {
           this.$message.error(response.data.msg);
         }
       });
@@ -130,20 +130,20 @@ export default {
       this.clientInfos = [];
       this.filteredClientInfos = [];
       Vue.axios.get('/api/client/list', {}).then((response) => {
-        if(response.data.success){
+        if (response.data.success) {
           this.clientInfos = response.data.data;
           let arr = [];
           let exists = {};
           for (let index in this.clientInfos) {
-          let clientInfo = this.clientInfos[index];
-          if (!exists[clientInfo.clientName]) {
-            arr.push({value: clientInfo.clientName});
-            exists[clientInfo.clientName] = true;
+            let clientInfo = this.clientInfos[index];
+            if (!exists[clientInfo.clientName]) {
+              arr.push({value: clientInfo.clientName});
+              exists[clientInfo.clientName] = true;
+            }
           }
-        }
-        this.suggestClientNames = arr;
+          this.suggestClientNames = arr;
           this.refreshPageClientInfos();
-        }else{
+        } else {
           this.$message.error(response.data.errorMsg);
         }
       });

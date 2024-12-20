@@ -16,7 +16,6 @@ public class MvcConfig implements WebMvcConfigurer {
     private LoginInterceptor loginInterceptor;
 
 
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 

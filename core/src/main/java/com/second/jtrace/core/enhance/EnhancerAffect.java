@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
 import static java.lang.System.currentTimeMillis;
 
 
@@ -29,26 +28,22 @@ public class EnhancerAffect {
      * 增强的方法个数
      */
     private final AtomicInteger methodCnt = new AtomicInteger();
-
-    /**
-     * 增强器
-     */
-    private ClassFileTransformer transformer;
-
-    /**
-     * 增强产生的异常
-     */
-    private Throwable throwable;
-
     /**
      * dumpClass的文件存放集合
      */
     private final Collection<File> classDumpFiles = new ArrayList<File>();
-
     /**
      * 增强的方法列表
      */
     private final List<String> methods = new ArrayList<String>();
+    /**
+     * 增强器
+     */
+    private ClassFileTransformer transformer;
+    /**
+     * 增强产生的异常
+     */
+    private Throwable throwable;
 
     public EnhancerAffect() {
     }
@@ -123,12 +118,12 @@ public class EnhancerAffect {
         this.transformer = transformer;
     }
 
-    public void setThrowable(Throwable throwable) {
-        this.throwable = throwable;
-    }
-
     public Throwable getThrowable() {
         return throwable;
+    }
+
+    public void setThrowable(Throwable throwable) {
+        this.throwable = throwable;
     }
 
     public Collection<File> getClassDumpFiles() {

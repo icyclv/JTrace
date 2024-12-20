@@ -45,10 +45,10 @@ public class MessageCodec extends MessageToMessageCodec<ByteBuf, IMessage> {
             return;
         }
         byte[] version = new byte[3];
-        for(int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             version[i] = in.readByte();
         }
-        if(VersionUtil.compareVersion(version, JTraceConstants.VERSION) != 0) {
+        if (VersionUtil.compareVersion(version, JTraceConstants.VERSION) != 0) {
             logger.warn("Received invalid version: " + Arrays.toString(version) + " from " + ctx.channel().remoteAddress());
             return;
         }

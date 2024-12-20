@@ -30,7 +30,7 @@ public class ApiEnhanceController {
     public Result trace(@RequestParam String clientId
             , @RequestBody TraceCommand command) {
         TraceResponse response = CommandUtil.dealCommand(server, clientId, command);
-        if(response.getStatus() == BaseResponse.STATUS_FAIL){
+        if (response.getStatus() == BaseResponse.STATUS_FAIL) {
             return Result.fail(response.getMsg());
         }
         return Result.ok(response);
@@ -40,7 +40,7 @@ public class ApiEnhanceController {
     public Result watch(@RequestParam String clientId
             , @RequestBody WatchCommand command) {
         WatchResponse response = CommandUtil.dealCommand(server, clientId, command);
-        if(response.getStatus() == BaseResponse.STATUS_FAIL){
+        if (response.getStatus() == BaseResponse.STATUS_FAIL) {
             return Result.fail(response.getMsg());
         }
         return Result.ok(response);

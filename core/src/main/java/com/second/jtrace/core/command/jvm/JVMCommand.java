@@ -6,7 +6,6 @@ import com.second.jtrace.core.command.AbstractCommand;
 import com.second.jtrace.core.command.jvm.response.JVMResponse;
 import com.second.jtrace.core.command.jvm.vo.JVMInfoVO;
 import com.second.jtrace.core.protocol.GsonSerializer;
-import com.second.jtrace.core.protocol.MessageTypeMapper;
 import com.second.jtrace.core.response.IResponse;
 
 import java.lang.management.*;
@@ -30,6 +29,7 @@ public class JVMCommand extends AbstractCommand {
         jvmResponse.setJvmInfo(jvmInfoVO);
         return jvmResponse;
     }
+
     private void addJvmInformation(JVMInfoVO jvmInfoVO) {
         addRuntimeInfo(jvmInfoVO.getRuntimeInfo());
         addClassLoading(jvmInfoVO.getClassLoadingInfo());
@@ -201,7 +201,6 @@ public class JVMCommand extends AbstractCommand {
         long[] ids = threads.findDeadlockedThreads();
         return ids == null ? 0 : ids.length;
     }
-
 
 
     @Override

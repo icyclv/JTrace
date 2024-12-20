@@ -4,7 +4,6 @@ package com.second.jtrace.core.command.jvm;
 import com.second.jtrace.core.client.IClient;
 import com.second.jtrace.core.command.AbstractCommand;
 import com.second.jtrace.core.command.jvm.response.HeapDumpResponse;
-import com.second.jtrace.core.protocol.MessageTypeMapper;
 import com.second.jtrace.core.response.IResponse;
 import com.second.jtrace.core.util.StringUtils;
 import com.sun.management.HotSpotDiagnosticMXBean;
@@ -29,13 +28,13 @@ public class HeapDumpCommand extends AbstractCommand {
         try {
             HeapDumpResponse heapDumpResponse = new HeapDumpResponse();
             String date = new SimpleDateFormat("yyyy-MM-dd-HH-mm").format(new Date());
-            File file = File.createTempFile("heapdump" + date + (live ? "-live" : "")+ StringUtils.UUID(true).substring(0,5), ".hprof");
+            File file = File.createTempFile("heapdump" + date + (live ? "-live" : "") + StringUtils.UUID(true).substring(0, 5), ".hprof");
             String dumpFilePath = file.getAbsolutePath();
             file.delete();
             run(dumpFilePath, live);
             heapDumpResponse.setMsg("dump success.");
             heapDumpResponse.setFilePath(dumpFilePath);
-            if(returnFile){
+            if (returnFile) {
                 byte[] fileContent = Files.readAllBytes(Paths.get(dumpFilePath));
                 heapDumpResponse.setFileContent(fileContent);
             }

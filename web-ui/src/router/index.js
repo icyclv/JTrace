@@ -8,27 +8,27 @@ import Login from '../views/login/index.vue';
 Vue.use(VueRouter);
 
 export const routes = [
-  {
-    path: '/',
-    component: ClientList,
-    name: 'ClientList',
-  },
-  {
-    path: '/client/detail',
-    component: ClientDetail,
-    name: 'ClientDetail',
-  },
-  {
-    path: '/login',
-    component: Login,
-    name: 'Login',
-  },
+    {
+        path: '/',
+        component: ClientList,
+        name: 'ClientList',
+    },
+    {
+        path: '/client/detail',
+        component: ClientDetail,
+        name: 'ClientDetail',
+    },
+    {
+        path: '/login',
+        component: Login,
+        name: 'Login',
+    },
 ];
 
 const router = new VueRouter({
-  mode: 'hash',
-  base: process.env.BASE_URL,
-  routes,
+    mode: 'hash',
+    base: process.env.BASE_URL,
+    routes,
 });
 
 export default router;

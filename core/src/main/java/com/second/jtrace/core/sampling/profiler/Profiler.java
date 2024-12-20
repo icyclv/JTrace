@@ -18,12 +18,12 @@ package com.second.jtrace.core.sampling.profiler;
 
 import com.second.jtrace.core.sampling.Reporter;
 
-import java.util.Map;
-
 public interface Profiler {
     public static final String PROFILER_NAME = "";
+
     long getIntervalMillis();
 
     void setReporter(Reporter reporter);
+
     void profile();
 }

@@ -1,7 +1,6 @@
 package com.second.jtrace.core.util;
 
 import com.second.jtrace.common.JTraceConstants;
-import com.second.jtrace.common.OSUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +43,6 @@ public final class FileUtils {
         }
         return new FileOutputStream(file, append);
     }
-
 
 
     /**

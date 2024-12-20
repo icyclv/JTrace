@@ -16,9 +16,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 /**
- * 
  * @author hengyunabc 2019-09-20
- *
  */
 public class Log4j2Helper {
     private static boolean Log4j2 = false;

@@ -7,6 +7,6 @@ public class StackTraceElementVO {
     private String declaringClass;
     private String methodName;
     private String fileName;
-    private int    lineNumber;
+    private int lineNumber;
     private boolean nativeMethod;
 }

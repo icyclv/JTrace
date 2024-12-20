@@ -10,31 +10,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class IOProfiler  implements Profiler {
+public class IOProfiler implements Profiler {
     public final static String PROFILER_NAME = "IO";
-
-    private long intervalMillis = JTraceConstants.DEFAULT_METRIC_INTERVAL;
     public static boolean available;
+
     static {
         available = OSUtils.isLinux();
     }
+
+    private long intervalMillis = JTraceConstants.DEFAULT_METRIC_INTERVAL;
     private Reporter reporter;
+
     public IOProfiler(Reporter reporter) {
-      setReporter(reporter);
+        setReporter(reporter);
 
     }
+
     @Override
     public long getIntervalMillis() {
         return intervalMillis;
     }
 
+    public void setIntervalMillis(long intervalMillis) {
+        this.intervalMillis = intervalMillis;
+    }
+
     @Override
     public void setReporter(Reporter reporter) {
         this.reporter = reporter;
-    }
-
-    public void setIntervalMillis(long intervalMillis) {
-        this.intervalMillis = intervalMillis;
     }
 
     @Override
@@ -50,14 +53,14 @@ public class IOProfiler  implements Profiler {
         Long write_bytes = ProcFileUtils.getBytesValue(procMap, "write_bytes");
 
         List<Map<String, Object>> cpuTime = ProcFileUtils.getProcStatCpuTime();
-        
+
         Map<String, Object> map = new HashMap<String, Object>();
 
         map.put("epochMillis", System.currentTimeMillis());
 
         Map<String, Object> selfMap = new HashMap<String, Object>();
         map.put("self", selfMap);
-        
+
         Map<String, Object> ioMap = new HashMap<String, Object>();
         selfMap.put("io", ioMap);
 

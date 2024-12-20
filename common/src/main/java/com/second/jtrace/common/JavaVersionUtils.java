@@ -4,8 +4,8 @@ import java.util.Properties;
 
 /**
  * Reference from Arthas project
- * @author hengyunabc 2018-11-21
  *
+ * @author hengyunabc 2018-11-21
  */
 public class JavaVersionUtils {
     private static final String VERSION_PROP_NAME = "java.specification.version";
@@ -20,7 +20,7 @@ public class JavaVersionUtils {
     }
 
     public static String javaVersionStr(Properties props) {
-        return (null != props) ? props.getProperty(VERSION_PROP_NAME): null;
+        return (null != props) ? props.getProperty(VERSION_PROP_NAME) : null;
     }
 
     public static float javaVersion() {

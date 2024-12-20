@@ -2,24 +2,24 @@
   <div>
     <el-row>
       <el-col :span="4" style="text-align: left">
-        <el-button @click="showClassLoaders()" type="primary">刷新数据</el-button>
+        <el-button type="primary" @click="showClassLoaders()">刷新数据</el-button>
       </el-col>
       <el-col :span="20" style="text-align: right">
         <el-checkbox v-model="filterDelegatingClassLoader" @change="refreshClassLoaders">
           排除DelegatingClassLoader
         </el-checkbox>
-        <el-autocomplete class="inline-input" v-model="classLoaderSearchKey" clearable
-                         :fetch-suggestions="querySearchKey" style="width: 400px;margin-left: 20px"
-                         placeholder="请输入搜索关键词">
+        <el-autocomplete v-model="classLoaderSearchKey" :fetch-suggestions="querySearchKey" class="inline-input"
+                         clearable placeholder="请输入搜索关键词"
+                         style="width: 400px;margin-left: 20px">
           <el-button slot="append" icon="el-icon-search" @click="refreshClassLoaders"></el-button>
         </el-autocomplete>
       </el-col>
     </el-row>
     <el-table :data="filteredClassLoaders" :height="dynamicHeight" style="margin-top:10px;">
-      <el-table-column prop="name" label="类加载器名" width="350"></el-table-column>
-      <el-table-column prop="classLoaderHash" label="类加载器Hash" width="150"></el-table-column>
-      <el-table-column prop="parentName" label="父类加载器"></el-table-column>
-      <el-table-column prop="loadedClassCount" label="类加载数量" width="150"></el-table-column>
+      <el-table-column label="类加载器名" prop="name" width="350"></el-table-column>
+      <el-table-column label="类加载器Hash" prop="classLoaderHash" width="150"></el-table-column>
+      <el-table-column label="父类加载器" prop="parentName"></el-table-column>
+      <el-table-column label="类加载数量" prop="loadedClassCount" width="150"></el-table-column>
     </el-table>
   </div>
 </template>
@@ -50,10 +50,10 @@ export default {
     showClassLoaders() {
       Vue.axios.post('/api/jvm/classloader?clientId=' + this.clientId
           , {}).then((response) => {
-        if(response.data.success){
+        if (response.data.success) {
           this.classLoaders = response.data.data.classLoaderInfos;
           this.refreshClassLoaders();
-        }else{
+        } else {
           this.$message.error(response.data.errorMsg);
         }
       });

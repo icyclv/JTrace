@@ -14,14 +14,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class TimesAdviceListener extends AdviceListenerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(TimesAdviceListener.class);
-
+    protected final ThreadLocal<TraceEntity> threadLocalTraceEntity = new ThreadLocal<TraceEntity>();
     protected AtomicInteger times = new AtomicInteger(0);
 
     public TimesAdviceListener(IClient client, EnhanceCommand enhanceCommand) {
         super(client, enhanceCommand);
     }
-
-    protected final ThreadLocal<TraceEntity> threadLocalTraceEntity = new ThreadLocal<TraceEntity>();
 
     /**
      * 获取threadLocal里面的traceEntity

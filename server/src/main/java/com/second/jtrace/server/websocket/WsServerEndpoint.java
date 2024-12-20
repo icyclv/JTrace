@@ -26,6 +26,26 @@ public class WsServerEndpoint {
     static ConcurrentMap<String, Session> sessions = new ConcurrentHashMap<>();
 
     /**
+     * 发送消息
+     */
+    public static void send(JTraceServer server, IAsyncResponse response) {
+        try {
+            if (response != null && sessions.containsKey(response.getSessionId())) {
+                synchronized (response.getSessionId().intern()) {
+                    sessions.get(response.getSessionId()).getBasicRemote().sendText(GsonSerializer.toJson(response));
+                }
+            } else {
+                logger.warn("session 不存在：" + response.getSessionId());
+                ResetCommand resetCommand = new ResetCommand();
+                resetCommand.setSessionId(response.getSessionId());
+                CommandUtil.dealCommand(server, response.getClientId(), resetCommand);
+            }
+        } catch (Exception ex) {
+            logger.error("发送失败：" + ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * 连接成功
      *
      * @param session
@@ -57,26 +77,5 @@ public class WsServerEndpoint {
     @OnMessage
     public String onMsg(String text) throws IOException {
         return "servet 发送：" + text;
-    }
-
-
-    /**
-     * 发送消息
-     */
-    public static void send(JTraceServer server, IAsyncResponse response) {
-        try {
-            if (response != null && sessions.containsKey(response.getSessionId())) {
-                synchronized (response.getSessionId().intern()) {
-                    sessions.get(response.getSessionId()).getBasicRemote().sendText(GsonSerializer.toJson(response));
-                }
-            } else {
-                logger.warn("session 不存在：" + response.getSessionId());
-                ResetCommand resetCommand = new ResetCommand();
-                resetCommand.setSessionId(response.getSessionId());
-                CommandUtil.dealCommand(server, response.getClientId(), resetCommand);
-            }
-        } catch (Exception ex) {
-            logger.error("发送失败：" + ex.getMessage(), ex);
-        }
     }
 }

@@ -2,11 +2,12 @@
   <div>
     <el-container>
       <el-header style="padding: 0px">
-        <Header :currentPath="currentPath" :client-name="clientInfo.clientName+'('+clientInfo.clientId+')'" :client-host="clientInfo.host+'('+clientInfo.ip+')'"/>
+        <Header :client-host="clientInfo.host+'('+clientInfo.ip+')'" :client-name="clientInfo.clientName+'('+clientInfo.clientId+')'"
+                :currentPath="currentPath"/>
       </el-header>
       <el-container>
         <el-main style="background: #f8f8f9;padding: 10px;margin-top: 3px">
-          <el-tabs class="tabs" v-model="tabName" style="height:calc(100vh - 100px)" tab-position="left">
+          <el-tabs v-model="tabName" class="tabs" style="height:calc(100vh - 100px)" tab-position="left">
             <el-tab-pane label="采样管理" name="sampling">
               <SamplingPanel :client-id="clientInfo.clientId"></SamplingPanel>
             </el-tab-pane>
@@ -34,21 +35,21 @@
             <el-tab-pane label="类分析" name="class">
               <el-row>
                 <el-col style="text-align: left">
-                  <el-input v-model="searchClassName" placeholder="请输入类名" clearable
+                  <el-input v-model="searchClassName" clearable placeholder="请输入类名"
                             style="width: 20%;margin-right: 10px"></el-input>
-                  <el-button @click="searchClass" type="primary">搜索</el-button>
+                  <el-button type="primary" @click="searchClass">搜索</el-button>
                 </el-col>
               </el-row>
-              <el-table :data="classList" :height="dynamicHeight" style="margin-top: 10px" border stripe>
-                <el-table-column prop="className" label="类名" min-width="25%"></el-table-column>
-                <el-table-column prop="classloader" label="类加载器" min-width="20%"></el-table-column>
-                <el-table-column prop="classLoaderHash" label="类加载器Hash" min-width="10%"></el-table-column>
-                <el-table-column prop="codeSource" label="类加载来源" min-width="25%"></el-table-column>
+              <el-table :data="classList" :height="dynamicHeight" border stripe style="margin-top: 10px">
+                <el-table-column label="类名" min-width="25%" prop="className"></el-table-column>
+                <el-table-column label="类加载器" min-width="20%" prop="classloader"></el-table-column>
+                <el-table-column label="类加载器Hash" min-width="10%" prop="classLoaderHash"></el-table-column>
+                <el-table-column label="类加载来源" min-width="25%" prop="codeSource"></el-table-column>
                 <el-table-column fixed="right" label="操作" min-width="15%">
                   <template slot-scope="scope">
-                    <el-button @click="showClassSource(scope.row)" type="text" size="small">源码</el-button>
-                    <el-button @click="showClassMethods(scope.row)" type="text" size="small">方法列表</el-button>
-                    <el-button @click="showLoggerLevel(scope.row)" type="text" size="small">日志级别</el-button>
+                    <el-button size="small" type="text" @click="showClassSource(scope.row)">源码</el-button>
+                    <el-button size="small" type="text" @click="showClassMethods(scope.row)">方法列表</el-button>
+                    <el-button size="small" type="text" @click="showLoggerLevel(scope.row)">日志级别</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -56,37 +57,37 @@
             <el-tab-pane label="方法分析" name="method">
               <el-row>
                 <el-col style="text-align: left">
-                  <el-input v-model="searchClassName" placeholder="请输入类名" clearable
+                  <el-input v-model="searchClassName" clearable placeholder="请输入类名"
                             style="width: 20%;margin-right: 10px"></el-input>
-                  <el-input v-model="searchMethodName" placeholder="请输入方法名" clearable
+                  <el-input v-model="searchMethodName" clearable placeholder="请输入方法名"
                             style="width: 20%;margin-right: 10px"></el-input>
                   <!-- <el-input v-model="searchClassLoaderHash" placeholder="请输入类加载器Hash" clearable
                             style="width: 20%;margin-right: 30px"></el-input> -->
-                  <el-button @click="searchClassMethod" type="primary"
-                             style="margin-right: 10px">搜索
+                  <el-button style="margin-right: 10px" type="primary"
+                             @click="searchClassMethod">搜索
                   </el-button>
-                  <el-button @click="showEnhanceDialog" type="info">
+                  <el-button type="info" @click="showEnhanceDialog">
                     打开方法监测页面
                   </el-button>
                 </el-col>
               </el-row>
-              <el-table :data="methodList" :height="dynamicHeight" style="margin-top: 10px" border stripe>
-                <el-table-column prop="methodName" label="方法名" min-width="15%"></el-table-column>
-                <el-table-column prop="parameters" label="参数类型" min-width="20%">
+              <el-table :data="methodList" :height="dynamicHeight" border stripe style="margin-top: 10px">
+                <el-table-column label="方法名" min-width="15%" prop="methodName"></el-table-column>
+                <el-table-column label="参数类型" min-width="20%" prop="parameters">
                   <template slot-scope="scope">
                     <span>{{ scope.row.parameters.join() }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="className" label="类名" min-width="20%"></el-table-column>
-                <el-table-column prop="classloader" label="类加载器" min-width="15%"></el-table-column>
-                <el-table-column prop="classLoaderHash" label="类加载器Hash" min-width="10%"></el-table-column>
+                <el-table-column label="类名" min-width="20%" prop="className"></el-table-column>
+                <el-table-column label="类加载器" min-width="15%" prop="classloader"></el-table-column>
+                <el-table-column label="类加载器Hash" min-width="10%" prop="classLoaderHash"></el-table-column>
                 <el-table-column label="操作" min-width="20%">
                   <template slot-scope="scope">
-                    <el-button @click="showMethodSource(scope.row)" type="text" size="small">源码</el-button>
-                    <el-button @click="watch(scope.row)" type="text" size="small">watch</el-button>
-                    <el-button @click="trace(scope.row)" type="text" size="small">trace</el-button>
-                    <el-button @click="stack(scope.row)" type="text" size="small">stack</el-button>
-                    <el-button @click="call(scope.row)" type="text" size="small">调用</el-button>
+                    <el-button size="small" type="text" @click="showMethodSource(scope.row)">源码</el-button>
+                    <el-button size="small" type="text" @click="watch(scope.row)">watch</el-button>
+                    <el-button size="small" type="text" @click="trace(scope.row)">trace</el-button>
+                    <el-button size="small" type="text" @click="stack(scope.row)">stack</el-button>
+                    <el-button size="small" type="text" @click="call(scope.row)">调用</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -98,27 +99,27 @@
         </el-main>
       </el-container>
     </el-container>
-    <el-dialog title="Source code" :visible.sync="dialogSourceCodeVisible" width="80%" >
-      <el-row v-for="(value, key) in sourceDialogInfo" style="text-align: left" :key="key">
+    <el-dialog :visible.sync="dialogSourceCodeVisible" title="Source code" width="80%">
+      <el-row v-for="(value, key) in sourceDialogInfo" :key="key" style="text-align: left">
         <el-col :span="24">
           <span>{{ key }}: {{ value }}</span>
         </el-col>
       </el-row>
       <MonacoEditor
-          language="java"
-          :height="dynamicHeight"
           :key="randomKey"
           :code="code"
-          :editorOptions="options" style="text-align: left">
+          :editorOptions="options"
+          :height="dynamicHeight"
+          language="java" style="text-align: left">
       </MonacoEditor>
     </el-dialog>
     <el-dialog :visible.sync="dialogLoggerLevelVisible">
       <LoggerDetail :client-id="clientInfo.clientId" :logger-info="loggerInfo" @closeLoggerDialog="closeLoggerDialog"/>
     </el-dialog>
-    <el-dialog :visible.sync="dialogEnhanceVisible" width="90%" >
+    <el-dialog :visible.sync="dialogEnhanceVisible" width="90%">
       <Enhance :client-ids="clientIds" :method-info="methodInfo"/>
     </el-dialog>
-    <el-dialog :visible.sync="dialogCallVisible" :fullscreen="true">
+    <el-dialog :fullscreen="true" :visible.sync="dialogCallVisible">
       <MethodCall :client-id="clientInfo.clientId" :method-info="methodInfo"/>
     </el-dialog>
   </div>
@@ -209,9 +210,9 @@ export default {
     searchClass() {
       Vue.axios.post('/api/class/list?clientId=' + this.clientInfo.clientId
           , {"className": this.searchClassName}).then((response) => {
-        if(response.data.success){
+        if (response.data.success) {
           this.classList = response.data.data.classInfos;
-        }else{
+        } else {
           this.$message.error(response.data.errorMsg);
         }
       });
@@ -222,9 +223,9 @@ export default {
             "className": this.searchClassName,
             "methodName": this.searchMethodName,
           }).then((response) => {
-        if(response.data.success){
+        if (response.data.success) {
           this.methodList = response.data.data.methodInfos;
-        }else{
+        } else {
           this.$message.error(response.data.errorMsg);
         }
       });
@@ -235,7 +236,7 @@ export default {
             "className": classInfo.className
             , "classLoaderHash": classInfo.classLoaderHash
           }).then((response) => {
-        if(response.data.success){
+        if (response.data.success) {
           this.randomKey = Math.floor(Math.random() * 100000);
           this.code = response.data.data.sourceInfo.source;
           this.sourceDialogInfo = {
@@ -243,7 +244,7 @@ export default {
             "classLoaderHash": classInfo.classLoaderHash
           }
           this.dialogSourceCodeVisible = true;
-        }else{
+        } else {
           this.$message.error(response.data.errorMsg);
         }
       });
@@ -255,7 +256,7 @@ export default {
             "methodName": methodInfo.methodName
             , "classLoaderHash": methodInfo.classLoaderHash
           }).then((response) => {
-        if(response.data.success){
+        if (response.data.success) {
           this.randomKey = Math.floor(Math.random() * 100000);
           this.code = response.data.data.sourceInfo.source;
           this.sourceDialogInfo = {
@@ -264,7 +265,7 @@ export default {
             "classLoaderHash": methodInfo.classLoaderHash
           }
           this.dialogSourceCodeVisible = true;
-        }else{
+        } else {
           this.$message.error(response.data.errorMsg);
         }
       });
@@ -277,17 +278,18 @@ export default {
     },
     showLoggerLevel(classInfo) {
       Vue.axios.post('/api/logger/info?clientId=' + this.clientInfo.clientId
-          , {"name": classInfo.className, "classLoaderHash": classInfo.classLoaderHash,
+          , {
+            "name": classInfo.className, "classLoaderHash": classInfo.classLoaderHash,
             "includeNoAppender": true
           }).then((response) => {
-        if(response.data.success){
+        if (response.data.success) {
           console.log(response.data.data);
           if (response.data.data && response.data.data.loggerInfos.length > 0) {
-          this.loggerInfo = response.data.data.loggerInfos[0];
-          this.loggerInfo.loggerName = classInfo.className;
+            this.loggerInfo = response.data.data.loggerInfos[0];
+            this.loggerInfo.loggerName = classInfo.className;
             this.dialogLoggerLevelVisible = true;
           }
-        }else{
+        } else {
           this.$message.error(response.data.errorMsg);
         }
       });

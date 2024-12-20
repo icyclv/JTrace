@@ -1,9 +1,7 @@
 package com.second.jtrace.core.command.logger.helper;
 
 /**
- * 
  * @author hengyunabc 2019-09-06
- *
  */
 public interface LoggerHelper {
     public static final String clazz = "class";

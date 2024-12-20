@@ -5,7 +5,6 @@ import com.second.jtrace.core.client.IClient;
 import com.second.jtrace.core.command.AbstractCommand;
 import com.second.jtrace.core.command.jvm.response.VMOptionResponse;
 import com.second.jtrace.core.command.jvm.vo.VMOptionVO;
-import com.second.jtrace.core.protocol.MessageTypeMapper;
 import com.second.jtrace.core.response.IResponse;
 import com.sun.management.HotSpotDiagnosticMXBean;
 import com.sun.management.VMOption;
@@ -32,10 +31,10 @@ public class VMOptionCommand extends AbstractCommand {
     }
 
     /*
-        * Cast VMOption to VMOptionVO, as VMOption from sun.management package.
+     * Cast VMOption to VMOptionVO, as VMOption from sun.management package.
      */
     public VMOptionVO castVMOption(VMOption vmOption) {
-        return new VMOptionVO(vmOption.getName(), vmOption.getValue(), vmOption.isWriteable(),vmOption.getOrigin().name());
+        return new VMOptionVO(vmOption.getName(), vmOption.getValue(), vmOption.isWriteable(), vmOption.getOrigin().name());
     }
 
     @Override

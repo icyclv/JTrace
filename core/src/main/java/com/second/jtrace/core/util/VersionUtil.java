@@ -4,6 +4,7 @@ public class VersionUtil {
 
     /**
      * 比较两个版本号。
+     *
      * @param v1 第一个版本号，表示为 byte[]
      * @param v2 第二个版本号，表示为 byte[]
      * @return -1 如果 v1 < v2，0 如果 v1 == v2，1 如果 v1 > v2

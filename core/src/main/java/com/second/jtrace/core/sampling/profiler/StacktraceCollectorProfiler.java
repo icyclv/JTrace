@@ -33,13 +33,13 @@ public class StacktraceCollectorProfiler implements Profiler {
         this.maxStringLength = maxStringLength;
     }
 
-    public void setIntervalMillis(long intervalMillis) {
-        this.intervalMillis = intervalMillis;
-    }
-
     @Override
     public long getIntervalMillis() {
         return this.intervalMillis;
+    }
+
+    public void setIntervalMillis(long intervalMillis) {
+        this.intervalMillis = intervalMillis;
     }
 
     @Override
@@ -53,18 +53,18 @@ public class StacktraceCollectorProfiler implements Profiler {
         if (threadInfos == null) {
             return;
         }
-        
+
         for (ThreadInfo threadInfo : threadInfos) {
             String threadName = threadInfo.getThreadName();
             if (threadName == null) {
                 threadName = "";
             }
-            
+
             if (!ignoreThreadNamePrefix.isEmpty()
                     && threadName.startsWith(ignoreThreadNamePrefix)) {
                 continue;
             }
-            
+
             StackTraceElement[] stackTraceElements = threadInfo.getStackTrace();
 
             Stacktrace stacktrace = new Stacktrace();
@@ -81,21 +81,21 @@ public class StacktraceCollectorProfiler implements Profiler {
                 stack.add(new ClassAndMethod(className, methodName));
 
                 totalLength += className.length() + methodName.length();
-                
+
                 if (totalLength >= maxStringLength) {
                     stack.add(new ClassAndMethod("_stack_", "_trimmed_"));
                     break;
                 }
             }
-            
+
             // Reverse the stack so the top method (most nested method) is the first element of the array
             ClassAndMethod[] classAndMethodArray = new ClassAndMethod[stack.size()];
             for (int i = 0; i < stack.size(); i++) {
                 classAndMethodArray[classAndMethodArray.length - 1 - i] = stack.get(i);
             }
-            
+
             stacktrace.setStack(classAndMethodArray);
-            
+
             buffer.appendValue(stacktrace);
         }
     }

@@ -4,7 +4,7 @@
       <el-col :span=8 style="text-align: left;">
         <el-input v-model="sampleInterval" placeholder="请输入采样间隔(100~5000)"
                   style="width: 200px;margin-right: 10px"></el-input>
-        <el-button @click="showAllThreads()" type="primary">刷新数据</el-button>
+        <el-button type="primary" @click="showAllThreads()">刷新数据</el-button>
       </el-col>
       <el-col :span="16" style="text-align: right">
         <el-select v-model="filterState">
@@ -17,54 +17,54 @@
               :value="item.value">
           </el-option>
         </el-select>
-        <el-autocomplete class="inline-input" v-model="threadSearchKey" clearable
-                         :fetch-suggestions="querySearchKey" style="width: 400px;margin-left: 20px"
-                         placeholder="请输入搜索关键词">
+        <el-autocomplete v-model="threadSearchKey" :fetch-suggestions="querySearchKey" class="inline-input"
+                         clearable placeholder="请输入搜索关键词"
+                         style="width: 400px;margin-left: 20px">
           <el-button slot="append" icon="el-icon-search" @click="refreshThreads"></el-button>
         </el-autocomplete>
       </el-col>
     </el-row>
     <el-table :data="filteredThreads" :height="dynamicHeight" style="margin-top:10px;">
-      <el-table-column prop="id" label="ID" width="100"></el-table-column>
-      <el-table-column prop="name" label="名称" sortable></el-table-column>
-      <el-table-column prop="group" label="线程组" sortable>
+      <el-table-column label="ID" prop="id" width="100"></el-table-column>
+      <el-table-column label="名称" prop="name" sortable></el-table-column>
+      <el-table-column label="线程组" prop="group" sortable>
         <template slot-scope="scope">
           {{ scope.row.group ? scope.row.group : "-" }}
         </template>
       </el-table-column>
-      <el-table-column prop="priority" label="优先级" width="100" sortable>
+      <el-table-column label="优先级" prop="priority" sortable width="100">
         <template slot-scope="scope">
           {{ parseInt(scope.row.priority) }}
         </template>
       </el-table-column>
-      <el-table-column prop="state" label="状态" width="200" sortable>
+      <el-table-column label="状态" prop="state" sortable width="200">
         <template slot-scope="scope">
           {{ scope.row.state ? scope.row.state : "-" }}
         </template>
       </el-table-column>
-      <el-table-column prop="cpu" label="CPU占用" width="100" sortable>
+      <el-table-column label="CPU占用" prop="cpu" sortable width="100">
         <template slot-scope="scope">
           {{ scope.row.cpu }}%
         </template>
       </el-table-column>
-      <el-table-column prop="deltaTime" label="增量CPU时间" width="150">
+      <el-table-column label="增量CPU时间" prop="deltaTime" width="150">
         <template slot-scope="scope">
           {{ scope.row.deltaTime }}ms
         </template>
       </el-table-column>
-      <el-table-column prop="daemon" label="守护线程" width="100">
+      <el-table-column label="守护线程" prop="daemon" width="100">
         <template slot-scope="scope">
           {{ scope.row.daemon ? '是' : '否' }}
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="150">
         <template slot-scope="scope">
-          <el-button @click="showThreadDetail(scope.row)" type="text" size="small">详情</el-button>
+          <el-button size="small" type="text" @click="showThreadDetail(scope.row)">详情</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog :visible.sync="dialogThreadDetailVisible" :fullscreen="true">
-      <GroupLabelValue group-name="线程详情" :groupObj="threadInfo"/>
+    <el-dialog :fullscreen="true" :visible.sync="dialogThreadDetailVisible">
+      <GroupLabelValue :groupObj="threadInfo" group-name="线程详情"/>
     </el-dialog>
   </div>
 </template>
@@ -103,11 +103,11 @@ export default {
       this.threadInfos = [];
       Vue.axios.post('/api/thread/all?clientId=' + this.clientId
           , {"sampleInterval": this.sampleInterval}).then((response) => {
-          if (response.data.success){
-            this.threadInfos = response.data.data.threadSampleInfos;
-          }else{
-            this.$message.error(response.data.errorMsg);
-          }
+        if (response.data.success) {
+          this.threadInfos = response.data.data.threadSampleInfos;
+        } else {
+          this.$message.error(response.data.errorMsg);
+        }
         this.refreshThreads();
       });
     },

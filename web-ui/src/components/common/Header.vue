@@ -13,19 +13,24 @@
       <div class="client-info" style="position: absolute; left: 50%; transform: translateX(-50%); ">
         <el-row v-if="clientName.length>0">
           <el-col :span="12">
-            <el-tag type="primary" :title="clientName" style="width: 200px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{ "客户端：" + clientName }}</el-tag>
+            <el-tag :title="clientName" style="width: 200px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;"
+                    type="primary">
+              {{ "客户端：" + clientName }}
+            </el-tag>
           </el-col>
         </el-row>
         <el-row v-if="clientHost.length>0">
           <el-col :span="12">
-            <el-tag type="primary" style="width: 200px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{ "地址：" + clientHost }}</el-tag>
+            <el-tag style="width: 200px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;" type="primary">
+              {{ "地址：" + clientHost }}
+            </el-tag>
           </el-col>
         </el-row>
       </div>
-     
+
       <!-- 右侧头像 -->
       <div class="avatar-wrapper">
-        <img src="/img/user.png" class="user-avatar">
+        <img class="user-avatar" src="/img/user.png">
       </div>
     </div>
   </div>
@@ -58,9 +63,7 @@ export default {
 
   },
 
-  methods: {
-
-  }
+  methods: {}
 };
 </script>
 <style>
@@ -158,6 +161,7 @@ export default {
   align-items: center;
   font-size: 18px; /* 增加整体字体大小 */
 }
+
 /* 修改菜单样式 */
 .header-container .sub-header .left-menu {
   float: left; /* 左侧菜单靠左 */

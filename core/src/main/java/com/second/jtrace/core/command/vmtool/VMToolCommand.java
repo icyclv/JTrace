@@ -59,7 +59,7 @@ public class VMToolCommand extends AbstractCommand {
         VmTool vmTool = VmTool.getInstance();
         Object[] instances = vmTool.getInstances(clazz, 10);
         if (instances.length == 0) {
-            return BaseResponse.fail("Can not find any instances: "+className, VMToolResponse.class);
+            return BaseResponse.fail("Can not find any instances: " + className, VMToolResponse.class);
         }
         VMToolResponse vmToolResponse = new VMToolResponse();
         Object object = ExpressUtils.get(express, clazz.getClassLoader(), new InstancesWrapper(instances));

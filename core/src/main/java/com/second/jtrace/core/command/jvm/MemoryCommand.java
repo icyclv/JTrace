@@ -8,7 +8,6 @@ import com.second.jtrace.core.command.jvm.response.MemoryResponse;
 import com.second.jtrace.core.command.jvm.vo.GcInfoVO;
 import com.second.jtrace.core.command.jvm.vo.MemoryInfoVO;
 import com.second.jtrace.core.command.jvm.vo.RuntimeInfoVO;
-import com.second.jtrace.core.protocol.MessageTypeMapper;
 import com.second.jtrace.core.response.IResponse;
 import com.second.jtrace.core.util.StringUtils;
 
@@ -28,7 +27,6 @@ public class MemoryCommand extends AbstractCommand {
     public Class<? extends IResponse> getResponseClass() {
         return MemoryResponse.class;
     }
-
 
 
     public List<MemoryInfoVO> getMemoryInfos() {
@@ -62,6 +60,7 @@ public class MemoryCommand extends AbstractCommand {
         addBufferPoolMemoryInfo(memoryInfos);
         return memoryInfos;
     }
+
     private MemoryUsage getUsage(MemoryPoolMXBean memoryPoolMXBean) {
         try {
             return memoryPoolMXBean.getUsage();

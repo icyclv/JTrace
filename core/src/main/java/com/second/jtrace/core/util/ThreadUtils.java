@@ -19,6 +19,19 @@ import java.util.List;
 
 public class ThreadUtils {
     private static ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+    /**
+     * </pre>
+     * java.lang.Thread.getStackTrace(Thread.java:1559),
+     * com.taobao.arthas.core.util.ThreadUtil.getThreadStack(ThreadUtil.java:349),
+     * com.taobao.arthas.core.command.monitor200.StackAdviceListener.before(StackAdviceListener.java:33),
+     * com.taobao.arthas.core.advisor.AdviceListenerAdapter.before(AdviceListenerAdapter.java:49),
+     * com.taobao.arthas.core.advisor.SpyImpl.atEnter(SpyImpl.java:42),
+     * java.arthas.SpyAPI.atEnter(SpyAPI.java:40),
+     * demo.MathGame.print(MathGame.java), demo.MathGame.run(MathGame.java:25),
+     * demo.MathGame.main(MathGame.java:16)
+     * </pre>
+     */
+    private static int MAGIC_STACK_DEPTH = 0;
 
     /**
      * 获取线程节点
@@ -50,20 +63,6 @@ public class ThreadUtils {
             return contextClassLoader.getClass().getName() + "@" + Integer.toHexString(contextClassLoader.hashCode());
         }
     }
-
-    /**
-     * </pre>
-     * java.lang.Thread.getStackTrace(Thread.java:1559),
-     * com.taobao.arthas.core.util.ThreadUtil.getThreadStack(ThreadUtil.java:349),
-     * com.taobao.arthas.core.command.monitor200.StackAdviceListener.before(StackAdviceListener.java:33),
-     * com.taobao.arthas.core.advisor.AdviceListenerAdapter.before(AdviceListenerAdapter.java:49),
-     * com.taobao.arthas.core.advisor.SpyImpl.atEnter(SpyImpl.java:42),
-     * java.arthas.SpyAPI.atEnter(SpyAPI.java:40),
-     * demo.MathGame.print(MathGame.java), demo.MathGame.run(MathGame.java:25),
-     * demo.MathGame.main(MathGame.java:16)
-     * </pre>
-     */
-    private static int MAGIC_STACK_DEPTH = 0;
 
     /**
      * 找到SpyAPI的深度
@@ -169,78 +168,78 @@ public class ThreadUtils {
     private static void resetThreadInfo(java.lang.management.ThreadInfo[] threadInfos, List<ThreadInfoVO> threadInfoVOList) {
         for (ThreadInfoVO threadWithoutDetail : threadInfoVOList) {
             java.lang.management.ThreadInfo threadInfo = findThreadInfoById(threadInfos, threadWithoutDetail.getId());
-            initThreadInfo(threadWithoutDetail,threadInfo);
+            initThreadInfo(threadWithoutDetail, threadInfo);
         }
     }
 
     private static void initThreadInfo(ThreadInfoVO result, java.lang.management.ThreadInfo threadInfo) {
-            if (threadInfo == null) {
-                return;
-            }
-            result.setId(threadInfo.getThreadId());
-            result.setName(threadInfo.getThreadName());
-            result.setState(threadInfo.getThreadState());
+        if (threadInfo == null) {
+            return;
+        }
+        result.setId(threadInfo.getThreadId());
+        result.setName(threadInfo.getThreadName());
+        result.setState(threadInfo.getThreadState());
 
-            MonitorInfo[] threadInfoLockedMonitors = threadInfo.getLockedMonitors();
-            if (threadInfoLockedMonitors != null) {
-                MonitorInfoVO[] monitorInfoVOS = new MonitorInfoVO[threadInfoLockedMonitors.length];
-                for (int i = 0; i < threadInfoLockedMonitors.length; i++) {
-                    MonitorInfo monitorInfo = threadInfoLockedMonitors[i];
-                    MonitorInfoVO monitorInfoVO = new MonitorInfoVO();
-                    monitorInfoVO.setClassName(monitorInfo.getClassName());
-                    monitorInfoVO.setIdentityHashCode(monitorInfo.getIdentityHashCode());
-                    monitorInfoVO.setStackDepth(monitorInfo.getLockedStackDepth());
-                    StackTraceElementVO stackTraceElementVO = new StackTraceElementVO();
-                    StackTraceElement lockedStackFrame = monitorInfo.getLockedStackFrame();
-                    stackTraceElementVO.setDeclaringClass(lockedStackFrame.getClassName());
-                    stackTraceElementVO.setFileName(lockedStackFrame.getFileName());
-                    stackTraceElementVO.setLineNumber(lockedStackFrame.getLineNumber());
-                    stackTraceElementVO.setMethodName(lockedStackFrame.getMethodName());
-                    stackTraceElementVO.setNativeMethod(lockedStackFrame.isNativeMethod());
-                    monitorInfoVO.setStackFrame(stackTraceElementVO);
+        MonitorInfo[] threadInfoLockedMonitors = threadInfo.getLockedMonitors();
+        if (threadInfoLockedMonitors != null) {
+            MonitorInfoVO[] monitorInfoVOS = new MonitorInfoVO[threadInfoLockedMonitors.length];
+            for (int i = 0; i < threadInfoLockedMonitors.length; i++) {
+                MonitorInfo monitorInfo = threadInfoLockedMonitors[i];
+                MonitorInfoVO monitorInfoVO = new MonitorInfoVO();
+                monitorInfoVO.setClassName(monitorInfo.getClassName());
+                monitorInfoVO.setIdentityHashCode(monitorInfo.getIdentityHashCode());
+                monitorInfoVO.setStackDepth(monitorInfo.getLockedStackDepth());
+                StackTraceElementVO stackTraceElementVO = new StackTraceElementVO();
+                StackTraceElement lockedStackFrame = monitorInfo.getLockedStackFrame();
+                stackTraceElementVO.setDeclaringClass(lockedStackFrame.getClassName());
+                stackTraceElementVO.setFileName(lockedStackFrame.getFileName());
+                stackTraceElementVO.setLineNumber(lockedStackFrame.getLineNumber());
+                stackTraceElementVO.setMethodName(lockedStackFrame.getMethodName());
+                stackTraceElementVO.setNativeMethod(lockedStackFrame.isNativeMethod());
+                monitorInfoVO.setStackFrame(stackTraceElementVO);
 
-                    monitorInfoVOS[i] = monitorInfoVO;
-                }
-                result.setLockedMonitors(monitorInfoVOS);
+                monitorInfoVOS[i] = monitorInfoVO;
             }
-            LockInfo[] synchronizers = threadInfo.getLockedSynchronizers();
-            if (synchronizers != null) {
-                LockInfoVO[] lockInfoVOS = new LockInfoVO[synchronizers.length];
-                for (int i = 0; i < synchronizers.length; i++) {
-                    LockInfo lockInfo = synchronizers[i];
-                    LockInfoVO lockInfoVO = new LockInfoVO();
-                    lockInfoVO.setClassName(lockInfo.getClassName());
-                    lockInfoVO.setIdentityHashCode(lockInfo.getIdentityHashCode());
-                    lockInfoVOS[i] = lockInfoVO;
-                }
-                result.setLockedSynchronizers(lockInfoVOS);
+            result.setLockedMonitors(monitorInfoVOS);
+        }
+        LockInfo[] synchronizers = threadInfo.getLockedSynchronizers();
+        if (synchronizers != null) {
+            LockInfoVO[] lockInfoVOS = new LockInfoVO[synchronizers.length];
+            for (int i = 0; i < synchronizers.length; i++) {
+                LockInfo lockInfo = synchronizers[i];
+                LockInfoVO lockInfoVO = new LockInfoVO();
+                lockInfoVO.setClassName(lockInfo.getClassName());
+                lockInfoVO.setIdentityHashCode(lockInfo.getIdentityHashCode());
+                lockInfoVOS[i] = lockInfoVO;
             }
-            result.setLockName(threadInfo.getLockName());
-            result.setLockOwnerId(threadInfo.getLockOwnerId());
-            result.setLockOwnerName(threadInfo.getLockOwnerName());
-            StackTraceElement[] trace = threadInfo.getStackTrace();
-            if (trace != null) {
-                StackTraceElementVO[] stackTraceElementVOS = new StackTraceElementVO[trace.length];
-                for (int i = 0; i < trace.length; i++) {
-                    StackTraceElement stackTraceElement = trace[i];
-                    StackTraceElementVO stackTraceElementVO = new StackTraceElementVO();
-                    stackTraceElementVO.setDeclaringClass(stackTraceElement.getClassName());
-                    stackTraceElementVO.setFileName(stackTraceElement.getFileName());
-                    stackTraceElementVO.setLineNumber(stackTraceElement.getLineNumber());
-                    stackTraceElementVO.setMethodName(stackTraceElement.getMethodName());
-                    stackTraceElementVO.setNativeMethod(stackTraceElement.isNativeMethod());
-                    stackTraceElementVOS[i] = stackTraceElementVO;
-                }
-                result.setStackTraces(stackTraceElementVOS);
+            result.setLockedSynchronizers(lockInfoVOS);
+        }
+        result.setLockName(threadInfo.getLockName());
+        result.setLockOwnerId(threadInfo.getLockOwnerId());
+        result.setLockOwnerName(threadInfo.getLockOwnerName());
+        StackTraceElement[] trace = threadInfo.getStackTrace();
+        if (trace != null) {
+            StackTraceElementVO[] stackTraceElementVOS = new StackTraceElementVO[trace.length];
+            for (int i = 0; i < trace.length; i++) {
+                StackTraceElement stackTraceElement = trace[i];
+                StackTraceElementVO stackTraceElementVO = new StackTraceElementVO();
+                stackTraceElementVO.setDeclaringClass(stackTraceElement.getClassName());
+                stackTraceElementVO.setFileName(stackTraceElement.getFileName());
+                stackTraceElementVO.setLineNumber(stackTraceElement.getLineNumber());
+                stackTraceElementVO.setMethodName(stackTraceElement.getMethodName());
+                stackTraceElementVO.setNativeMethod(stackTraceElement.isNativeMethod());
+                stackTraceElementVOS[i] = stackTraceElementVO;
             }
+            result.setStackTraces(stackTraceElementVOS);
+        }
 
-            result.setStackTrace(StringUtils.getStackTraceString(trace));
-            result.setBlockedCount(threadInfo.getBlockedCount());
-            result.setBlockedTime(threadInfo.getBlockedTime());
-            result.setNativeFlag(threadInfo.isInNative());
-            result.setSuspended(threadInfo.isSuspended());
-            result.setWaitedCount(threadInfo.getWaitedCount());
-            result.setWaitedTime(threadInfo.getWaitedTime());
+        result.setStackTrace(StringUtils.getStackTraceString(trace));
+        result.setBlockedCount(threadInfo.getBlockedCount());
+        result.setBlockedTime(threadInfo.getBlockedTime());
+        result.setNativeFlag(threadInfo.isInNative());
+        result.setSuspended(threadInfo.isSuspended());
+        result.setWaitedCount(threadInfo.getWaitedCount());
+        result.setWaitedTime(threadInfo.getWaitedTime());
 
 
     }
