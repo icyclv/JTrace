@@ -14,6 +14,8 @@ also provides a web-based interface.
 **Warning: This is solely a learning project and currently lacks thorough testing. Please do not deploy it in a
 production environment.**
 
+Many parts of the code in this project are derived from Arthas [1], JvmEye [2], and JVM-Profiler [3]. Special thanks to these three projects.
+
 ## Features
 
 - **Sampling Profilers**: Supports CPU, memory, stack trace, and I/O sampling.
@@ -52,6 +54,7 @@ java -jar jtrace-server.jar
 It will start a web server at port 8088 and a netty server at port 4090.
 
 You can configure parameters such as InfluxDB in the ```server/src/main/resources/application.yml``` file.
+If InfluxDB is not enabled, the sampling method will have no output.
 
 ### 3. Start Client
 
