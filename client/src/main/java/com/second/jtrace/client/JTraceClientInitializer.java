@@ -15,7 +15,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 public class JTraceClientInitializer extends ChannelInitializer<SocketChannel> {
     private final JTraceClient client;
     private final MessageCodec MESSAGE_CODEC = new MessageCodec();
-    private final LoggingHandler LOGGING_HANDLER = new LoggingHandler(LogLevel.WARN);
+    private final LoggingHandler LOGGING_HANDLER = new LoggingHandler(LogLevel.ERROR);
 
 
     public JTraceClientInitializer(JTraceClient client) {

@@ -16,7 +16,7 @@ import io.netty.util.AttributeKey;
 public class JTraceServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private static final MessageCodec MESSAGE_CODEC = new MessageCodec();
-    private static final LoggingHandler LOGGING_HANDLER = new LoggingHandler(LogLevel.WARN);
+    private static final LoggingHandler LOGGING_HANDLER = new LoggingHandler(LogLevel.ERROR);
     private static final AttributeKey<String> CLIENT_ID_KEY = AttributeKey.valueOf("client_id");
     private final JTraceServer server;
 
