@@ -6,7 +6,7 @@
 
 ## Introduction
 
-**JTrace** is a Java performance analysis tool inspired by Arthas [1]. This project adopts a client-server (C-S)
+**JTrace** is a Java performance analysis tool derived from Arthas [1]. This project adopts a client-server (C-S)
 architecture based on [2] and includes additional features such as I/O, memory, and CPU sampling tools. The collected
 data can be exported directly to InfluxDB for visualization with tools like Grafana. For enhanced usability, the project
 also provides a web-based interface.
@@ -92,6 +92,11 @@ Open your browser and go to http://localhost:8088, you will see the JTrace web p
 | jtrace-server  | Serves as the web server (for users, port 8080) and Netty server (for agents, port 4090).          |
 | jtrace-spy     | Define the Spy class functionality.                                                                |
 | web-ui         | Provides the Web UI for JTrace (port 8080). If packaged with the server, the port changes to 8088. |
+
+## TODO:
+1. Provide Grafana scripts or integrate sampling data visualization into the web.
+2. Currently, stack trace sampling data can only be manually processed to obtain a visual flame graph (by exporting data from InfluxDB and processing it). Provide an automated script.
+3. Integrate async-profiler; the current sampling performance overhead is significant.
 
 ## Reference
 
