@@ -72,12 +72,15 @@ export default {
       command.express = "#springContext=instances[0],+#allResources={},#springContext.getResources(\"classpath*:*.properties\").{#url=#this.getURL(),#allResources.add(#url)},#springContext.getResources(\"classpath*:*.yml\").{#url=#this.getURL(),#allResources.add(#url)},#allResources";
       Vue.axios.post('/api/vmtool/execute?clientId=' + this.clientId
           , command).then((response) => {
-        let arr = JSON.parse(response.returnObj);
+      if(response.data.success){
+        let arr = JSON.parse(response.data.data.returnObj);
         let resourceInfos = {};
         for (let key in arr) {
           resourceInfos[key] = arr[key];
         }
         this.springResourceInfos = resourceInfos;
+      }
+
       });
     },
     showConfigInfo() {
@@ -89,24 +92,26 @@ export default {
           ",#pSource=#this,#this instanceof org.springframework.core.env.EnumerablePropertySource ?#this.getPropertyNames().{#key=#this,#allProperties.add(#key+\":\"+#pSource.getProperty(#key))}:#{}},#allProperties";
       Vue.axios.post('/api/vmtool/execute?clientId=' + this.clientId
           , command).then((response) => {
-        let obj = JSON.parse(response.returnObj);
-        let configInfo = {};
-        let currentSource = "";
-        for (let index in obj) {
-          let lineInfo = this.parseLineInfo(obj[index]);
-          if (obj[index].startsWith("propertySourceName")) {
-            if (JSON.stringify(configInfo[currentSource]) == '{}') {
-              configInfo[currentSource] = null;
-            }
-            currentSource = lineInfo.value;
-            configInfo[currentSource] = {};
-          } else {
-            if (configInfo[currentSource]) {
-              configInfo[currentSource][lineInfo.key] = lineInfo.value;
+        if(response.data.success){
+          let obj = JSON.parse(response.data.data.returnObj);
+          let configInfo = {};
+          let currentSource = "";
+          for (let index in obj) {
+            let lineInfo = this.parseLineInfo(obj[index]);
+            if (obj[index].startsWith("propertySourceName")) {
+              if (JSON.stringify(configInfo[currentSource]) == '{}') {
+                configInfo[currentSource] = null;
+              }
+              currentSource = lineInfo.value;
+              configInfo[currentSource] = {};
+            } else {
+              if (configInfo[currentSource]) {
+                configInfo[currentSource][lineInfo.key] = lineInfo.value;
+              }
             }
           }
+          this.springConfigInfo = configInfo;
         }
-        this.springConfigInfo = configInfo;
       });
     },
     parseLineInfo(line) {
